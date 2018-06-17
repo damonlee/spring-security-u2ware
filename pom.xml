@@ -5,7 +5,6 @@
 
     <groupId>io.github.u2ware</groupId>
     <artifactId>spring-security-u2ware</artifactId>
-    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>spring-security-u2ware</name>
