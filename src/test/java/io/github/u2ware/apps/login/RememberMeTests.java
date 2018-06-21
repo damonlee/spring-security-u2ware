@@ -1,45 +1,16 @@
 package io.github.u2ware.apps.login;
 
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import io.github.u2ware.apps.Application;
+import io.github.u2ware.apps.ApplicationTests;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes=Application.class)
-public class RememberMeTests {
-
-	protected Log logger = LogFactory.getLog(getClass());
-	
-	private MockMvc mvc;
-	private @Autowired WebApplicationContext context;
-	private @Value("${security.user.name:}") String securityUserName;
-	private @Value("${security.user.password:}") String securityUserPass;
-
-	
-	@Before
-	public void setUp(){
-		this.mvc = MockMvcBuilders.webAppContextSetup(context)
-				.apply(springSecurity())
-				.build() ;
-	}
+public class RememberMeTests extends ApplicationTests{
 
 	@Test
 	public void contextLoads() throws Exception {
@@ -62,7 +33,7 @@ public class RememberMeTests {
 		//
 		/////////////////////////////
 		this.mvc.perform(
-				get("/apis/profile")
+				get(uri("/profile"))
 			).andDo(
 				print()
 			).andExpect(
@@ -70,7 +41,7 @@ public class RememberMeTests {
 			);
 		
 		MvcResult r1 = this.mvc.perform(
-				get("/apis/profile")
+				get(uri("/profile"))
 				.header("Authorization", r0.getResponse().getHeader("Authorization"))
 			).andDo(
 				print()
@@ -79,7 +50,7 @@ public class RememberMeTests {
 			).andReturn();
 
 		this.mvc.perform(
-				get("/apis/profile")
+				get(uri("/profile"))
 				.header("Authorization", r1.getResponse().getHeader("Authorization"))
 			).andDo(
 				print()
@@ -90,7 +61,7 @@ public class RememberMeTests {
 
 		try {
 			this.mvc.perform(
-					get("/apis/profile")
+					get(uri("/profile"))
 					.header("Authorization", r1.getResponse().getHeader("Authorization"))
 				).andDo(
 					print()
@@ -100,7 +71,5 @@ public class RememberMeTests {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-
-	
 	}	
 }
