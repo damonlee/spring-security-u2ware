@@ -18,12 +18,9 @@ public class UserRestRepositoryTests extends ApplicationTests {
 		userRestRepository.save(user("abcd"));
 		userRestRepository.save(user("efgh"));
 
-		super.performRead(uri("/users/search/findByUsername"), new UserDetailsDelegate("u1"), params("username=abcd"),
-				status().is4xxClientError());
-		super.performRead(uri("/users/search/findByUsername"), new UserDetailsDelegate("u1", "ROLE_ADMIN"),
-				params("username=efgh"), status().is4xxClientError());
-		super.performRead(uri("/users/search/findByUsername"), new UserDetailsDelegate("u1", "ROLE_ADMIN"),
-				params("username=abcd"), status().is2xxSuccessful());
+		super.performRead(uri("/users/search/findByUsername"), new UserDetailsDelegate("u1"), params("username=abcd"), status().is4xxClientError());
+		super.performRead(uri("/users/search/findByUsername"), new UserDetailsDelegate("u1", "ROLE_ADMIN"), params("username=efgh"), status().is4xxClientError());
+		super.performRead(uri("/users/search/findByUsername"), new UserDetailsDelegate("u1", "ROLE_ADMIN"), params("username=abcd"), status().is2xxSuccessful());
 
 		super.performRead(uri("/users"), new UserDetailsDelegate("u1"), status().is2xxSuccessful());
 		super.performRead(uri("/users/abcd"), new UserDetailsDelegate("u1"), status().is2xxSuccessful());
