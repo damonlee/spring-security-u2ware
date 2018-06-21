@@ -41,7 +41,7 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 	public void setKey(String key) {
 		this.key = key;
 	}
-	
+
 	@Override
 	public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -75,7 +75,7 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 		logger.debug("Login of user "+ (auth == null ? "Unknown" : auth.getName()));
 		saveRememberMe(request, response, auth);
 	}
-	
+
 	@Override
 	public void loginFail(HttpServletRequest request, HttpServletResponse response) {
 		logger.debug("Interactive login attempt was unsuccessful.");
@@ -94,7 +94,7 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 	protected abstract UserDetails loadRememberMe(HttpServletRequest request, HttpServletResponse response);
 	protected abstract void saveRememberMe(HttpServletRequest request, HttpServletResponse response, Authentication successfulAuthentication) ;
 	protected abstract void cancelRememberMe(HttpServletRequest request, HttpServletResponse response) ;
-	
+
 	////////////////////////////////////////////////////////////////////
 	//
 	////////////////////////////////////////////////////////////////////
@@ -120,7 +120,7 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 	private boolean isInstanceOfUserDetails(Authentication authentication) {
 		return authentication.getPrincipal() instanceof UserDetails;
 	}
-	
+
 	/////////////////////////////////////////////////////////////////////
 	//
 	/////////////////////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 		addCookie(request, response, cookieName, cookieValue, maxAge, cookieDomain, null);
 	}
 	protected void addCookie(HttpServletRequest request, HttpServletResponse response, String cookieName, String cookieValue, int maxAge, String cookieDomain, Boolean useSecureCookie) {
-		
+
 		logger.debug("addCookie");
 
 		Cookie cookie = new Cookie(cookieName, cookieValue);
@@ -153,7 +153,7 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 		}
 		response.addCookie(cookie);
 	}
-	
+
 	protected void removeCookie(HttpServletRequest request, HttpServletResponse response, String cookieName) {
 		removeCookie(request, response, cookieName, null);
 	}
@@ -168,7 +168,5 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 		}
 		response.addCookie(cookie);
 	}
-	
-	
-	
+
 }

@@ -6,14 +6,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class UserDetailsServiceDelegate implements UserDetailsService{
 
-	
+
 	private UserDetailsService[] userDetailsServices;
-	
+
 	public UserDetailsServiceDelegate(UserDetailsService... userDetailsServices ) {
 		this.userDetailsServices = userDetailsServices;
 	}
-	
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		for(UserDetailsService userDetailsService : userDetailsServices) {

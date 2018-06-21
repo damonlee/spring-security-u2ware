@@ -15,7 +15,6 @@ public class HeaderBasedRememberMeServices extends TokenBasedRememberMeServices{
 
 	@Override
 	protected boolean rememberMeRequested(HttpServletRequest request, String parameter) {
-		//RememberMeAuthenticationFilter f;
 		return true;
 	}
 
@@ -23,7 +22,7 @@ public class HeaderBasedRememberMeServices extends TokenBasedRememberMeServices{
 	protected String extractRememberMeCookie(HttpServletRequest request) {
 		return request.getHeader(super.getCookieName());
 	}
-	
+
 	@Override
 	protected void setCookie(String[] tokens, int maxAge, HttpServletRequest request, HttpServletResponse response) {
 		String headerValue = encodeCookie(tokens);

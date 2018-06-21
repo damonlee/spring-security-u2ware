@@ -52,7 +52,6 @@ public class PersistentHeaderBasedRememberMeServices extends PersistentTokenBase
 
 	@Override
 	protected void cancelCookie(HttpServletRequest request, HttpServletResponse response) {
-		//logger.info("Remember-me cookie cancelling..."+"["+request.getMethod()+"]"+request.getRequestURL());
 		//Do nothing...
 	}
 	
@@ -81,7 +80,7 @@ public class PersistentHeaderBasedRememberMeServices extends PersistentTokenBase
 			}
 		}
 	}
-	
+
 	protected PersistentRememberMeToken extractRememberMeToken(HttpServletRequest request) {
 		String extractRememberMeCookie = request.getHeader(super.getCookieName());
 		if(StringUtils.hasLength(extractRememberMeCookie)) {
@@ -90,6 +89,5 @@ public class PersistentHeaderBasedRememberMeServices extends PersistentTokenBase
 		}
 		return null;
 	}
-	
-	
+
 }

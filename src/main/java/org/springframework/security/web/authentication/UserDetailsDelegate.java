@@ -14,7 +14,7 @@ public class UserDetailsDelegate extends User{
 	public UserDetailsDelegate(String username, String... roles) {
 		super(username, username, UserDetailsDelegate.authorities(roles));
 	}
-	
+
 	private static class UserAuthority implements GrantedAuthority{
 		private String authority;
 
@@ -28,7 +28,7 @@ public class UserDetailsDelegate extends User{
 			return authority;
 		}
 	}
-	
+
 	@JsonIgnore
 	private static Collection<UserAuthority> authorities(String... roles){
 		Collection<UserAuthority> authorities = new ArrayList<UserAuthority>();
