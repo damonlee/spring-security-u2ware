@@ -14,44 +14,55 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @MappedSuperclass
-@SuppressWarnings("serial")
-@Data 
-public abstract class AbstractUserEntity<V extends GrantedAuthority> implements UserDetails {
+public @SuppressWarnings("serial") abstract class AbstractUserEntity<V extends GrantedAuthority> implements UserDetails {
 
-	private @Id String username;
-	private @JsonIgnore @Column(length=512, nullable=false) String password;
-	private @JsonIgnore @Transient boolean accountNonExpired = true;
-	private @JsonIgnore @Transient boolean accountNonLocked = true;
-	private @JsonIgnore @Transient boolean credentialsNonExpired = true;
-	private @JsonIgnore @Transient boolean enabled = true;
-	
-	private String nickname;
-	
+	@Id
+	private @Getter @Setter String username;
+
+	@Column(length = 512, nullable = false)
+	private @Getter @Setter @JsonIgnore String password;
+
+	private @Getter @Setter String nickname;
+
 	public abstract Collection<V> getAuthorities();
+
 	public abstract V createAuthority(String authority);
-	
-	@Transient 
-	public void setAuthoritiesValue(String... roles){
+
+	@Transient
+	private @Getter @JsonIgnore boolean accountNonExpired = true;
+
+	@Transient
+	private @Getter @JsonIgnore boolean accountNonLocked = true;
+
+	@Transient
+	private @Getter @JsonIgnore boolean credentialsNonExpired = true;
+
+	@Transient
+	private @Getter @JsonIgnore boolean enabled = true;
+
+	@Transient
+	public void setAuthoritiesValue(String... roles) {
 		List<V> authorities = new ArrayList<V>();
-		for(String role : roles){
+		for (String role : roles) {
 			authorities.add(createAuthority(role));
 		}
 		getAuthorities().clear();
 		getAuthorities().addAll(authorities);
 	}
 
-	@Transient 
-	public String[] getAuthoritiesValue(){
+	@Transient
+	public String[] getAuthoritiesValue() {
 		List<String> authorities = new ArrayList<String>();
-		for(V authority : getAuthorities()){
+		for (V authority : getAuthorities()) {
 			authorities.add(authority.getAuthority());
 		}
 		String[] r = new String[authorities.size()];
 		authorities.toArray(r);
 		return r;
 	}
-	 
+
 }

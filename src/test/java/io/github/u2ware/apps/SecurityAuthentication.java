@@ -18,8 +18,9 @@ public class SecurityAuthentication implements AuditorAware<AbstractBaseEntity.A
 	protected Authentication getAuthentication() {
 		return SecurityContextHolder.getContext().getAuthentication();
 	}
+
 	protected AbstractUserEntity<?> getPrincipal() {
-		return (AbstractUserEntity<?>)getAuthentication().getPrincipal();
+		return (AbstractUserEntity<?>) getAuthentication().getPrincipal();
 	}
 
 	public String getUsername() {
@@ -28,18 +29,19 @@ public class SecurityAuthentication implements AuditorAware<AbstractBaseEntity.A
 
 	public boolean hasRoles(SecurityAuthority... roles) {
 		Collection<? extends GrantedAuthority> authorities = getPrincipal().getAuthorities();
-		for( GrantedAuthority authority : authorities){
-			for(SecurityAuthority role : roles) {
-				if(authority.getAuthority().equals(role.name())) {
+		for (GrantedAuthority authority : authorities) {
+			for (SecurityAuthority role : roles) {
+				if (authority.getAuthority().equals(role.name())) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
+
 	@Override
 	public AbstractBaseEntity.Auditing getCurrentAuditor() {
-		
+
 		logger.info("getCurrentAuditor");
 		AbstractUserEntity<?> a = getPrincipal();
 		AbstractBaseEntity.Auditing u = new AbstractBaseEntity.Auditing();

@@ -34,23 +34,23 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	private String rememberMeKey = "Custom RememberMe Authentication Provider Key";
-	
+
 	private @Value("${spring.data.rest.base-path:}") String springDataRestBasePath;
 	private @Autowired UserDetailsService[] userDetailsServices;
 	private @Autowired AuthenticationHandler authenticationHandler;
 	private @Autowired PersistentTokenRepository persistentTokenRepository;
-	private @Autowired SecurityPasswordEncoder passwordEncoder;
-	
+	private @Autowired UserPasswordEncoder passwordEncoder;
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(new UserDetailsServiceDelegate(userDetailsServices)).passwordEncoder(passwordEncoder);
 	}
-	
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-        http
-		    	.csrf()
-		    		.disable()
+		http
+			.csrf()
+				.disable()
 			.formLogin()
 				.successHandler(authenticationHandler)
 				.failureHandler(authenticationHandler)
@@ -69,7 +69,7 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 				.antMatchers(springDataRestBasePath+"/**").authenticated()
 				.anyRequest().permitAll()
 				.and()
-				
+
 			//////////////////////////////////////////////////
 			// For 3rd App..
 			//////////////////////////////////////////////////
@@ -90,38 +90,34 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 			;
 	}
 
-	
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        
-        CorsConfiguration configuration = new CorsConfiguration();
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setMaxAge(3600L);
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+		configuration.setAllowedOrigins(Arrays.asList("*"));
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        //서버측에서 요청 헤더를 읽을 수 있도록 설정
+		// 서버측에서 요청 헤더를 읽을 수 있도록 설정
 		configuration.setAllowedHeaders(Arrays.asList("*"));
-        //클라이언트측에서 응답 헤더를  읽을 수 있도록 설정
+		// 클라이언트측에서 응답 헤더를 읽을 수 있도록 설정
 		configuration.setExposedHeaders(Arrays.asList("Authorization", "xsrf-token"));
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-    
-    @Component
-    public static class SecurityPasswordEncoder extends ShaPasswordEncoder {
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
 
-    	public SecurityPasswordEncoder(){
-    		super(256);
-    	}
-    	
-    	public String encode(String rawPass) {
-    		return super.encodePassword(rawPass, null);
-    	}
-    }
-    
+	@Component
+	public static class UserPasswordEncoder extends ShaPasswordEncoder {
+
+		public UserPasswordEncoder() {
+			super(256);
+		}
+
+		public String encode(String rawPass) {
+			return super.encodePassword(rawPass, null);
+		}
+	}
+
 }
-
-//CorsFilter f1;
-//CsrfFilter f2;
-//HttpSessionCsrfTokenRepository  f;

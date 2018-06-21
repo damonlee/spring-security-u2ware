@@ -4,16 +4,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
 @MappedSuperclass
 public abstract class AbstractUserEventEntity {
 
 	@Id @GeneratedValue 
-	private Long seq;
-
-	private String username;
-	private String eventType;
-	private Long eventTimestamp;
+	private @Getter @Setter Long seq;
+	private @Getter @Setter String username;
+	private @Getter @Setter String eventType;
+	private @Getter @Setter Long eventTimestamp;
 }

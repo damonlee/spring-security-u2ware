@@ -18,38 +18,42 @@ import org.springframework.security.core.GrantedAuthority;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.github.u2ware.apps.AbstractUserEntity;
-import io.github.u2ware.apps.user.User.UserAuthority;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import io.github.u2ware.apps.user.User.Authority;
+import lombok.Getter;
+import lombok.Setter;
 
+@Entity
+@Table(name = "UserAccount")
+public @SuppressWarnings("serial") class User extends AbstractUserEntity<Authority> {
 
-@Data @EqualsAndHashCode(callSuper=true) @SuppressWarnings("serial")
-@Entity @Table(name="UserAccount")
-public class User extends AbstractUserEntity<UserAuthority>{
-
-	@OneToMany(mappedBy="username",fetch=FetchType.EAGER, cascade={CascadeType.ALL},orphanRemoval=true)
-	private @JsonIgnore Collection<UserAuthority> authorities = new ArrayList<UserAuthority>();
+	@OneToMany(mappedBy = "username", fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true)
+	private @Getter @Setter @JsonIgnore Collection<Authority> authorities = new ArrayList<Authority>();
 
 	@Override
-	public UserAuthority createAuthority(String authority) {
-		UserAuthority auth = new UserAuthority();
+	public Authority createAuthority(String authority) {
+		Authority auth = new Authority();
 		auth.setUsername(this);
 		auth.setAuthority(authority);
 		return auth;
 	}
-	
-	@Data 
-	@Entity @Table(name="UserAccountAuthority")
-	public static class UserAuthority implements GrantedAuthority{
 
-		private @Id @GeneratedValue Long id;
-		private @ManyToOne(fetch=FetchType.LAZY) @JsonIgnore User username;
-		private @NotNull String authority;
-		
-		public String toString(){
+	@Entity
+	@Table(name = "UserAccountAuthority")
+	public static class Authority implements GrantedAuthority {
+
+		@Id
+		@GeneratedValue
+		private @Getter @Setter Long id;
+
+		@ManyToOne(fetch = FetchType.LAZY)
+		private @Getter @Setter @JsonIgnore User username;
+
+		@NotNull
+		private @Getter @Setter String authority;
+
+		public String toString() {
 			return authority;
 		}
 	}
-	
 
 }

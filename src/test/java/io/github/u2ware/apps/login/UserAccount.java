@@ -18,38 +18,42 @@ import org.springframework.security.core.GrantedAuthority;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.github.u2ware.apps.AbstractUserEntity;
-import io.github.u2ware.apps.login.UserAccount.UserAccountAuthority;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import io.github.u2ware.apps.login.UserAccount.Authority;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data @EqualsAndHashCode(callSuper=false, doNotUseGetters=true)
-@Entity @Table(name="UserAccount")
-public class UserAccount extends AbstractUserEntity<UserAccountAuthority>{
+@Entity
+@Table(name = "UserAccount")
+public @SuppressWarnings("serial") class UserAccount extends AbstractUserEntity<Authority> {
 
-	private static final long serialVersionUID = 6205710433137313826L;
-
-	@OneToMany(mappedBy="username",fetch=FetchType.EAGER, cascade={CascadeType.ALL},orphanRemoval=true)
-	private @JsonIgnore Collection<UserAccountAuthority> authorities = new ArrayList<UserAccountAuthority>();
+	@OneToMany(mappedBy = "username", fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true)
+	private @Getter @Setter @JsonIgnore Collection<Authority> authorities = new ArrayList<Authority>();
 
 	@Override
-	public UserAccountAuthority createAuthority(String authority) {
-		UserAccountAuthority auth = new UserAccountAuthority();
+	public Authority createAuthority(String authority) {
+		Authority auth = new Authority();
 		auth.setUsername(this);
 		auth.setAuthority(authority);
 		return auth;
 	}
-	
-	@Data @SuppressWarnings("serial") 
-	@Entity @Table(name="UserAccountAuthority")
-	public static class UserAccountAuthority implements GrantedAuthority{
 
-		private @Id @GeneratedValue Long id;
-		private @ManyToOne(fetch=FetchType.LAZY) @JsonIgnore UserAccount username;
-		private @NotNull String authority;
-		
-		public String toString(){
+	@Entity
+	@Table(name = "UserAccountAuthority")
+	public static class Authority implements GrantedAuthority {
+
+		@Id
+		@GeneratedValue
+		private @Getter @Setter Long id;
+
+		@ManyToOne(fetch = FetchType.LAZY)
+		private @Getter @Setter @JsonIgnore UserAccount username;
+
+		@NotNull
+		private @Getter @Setter String authority;
+
+		public String toString() {
 			return authority;
 		}
 	}
-	
+
 }

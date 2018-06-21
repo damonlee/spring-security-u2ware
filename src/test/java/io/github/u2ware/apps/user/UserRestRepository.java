@@ -7,15 +7,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-public interface UserRestRepository extends PagingAndSortingRepository<User, String>{
-
+public interface UserRestRepository extends PagingAndSortingRepository<User, String> {
 
 	@PostAuthorize("(returnObject != null && returnObject.nickname == 'abcd') || returnObject == null")
 	User findOne(String id);
-	
-	
+
 	@PreAuthorize("hasRole('ROLE_ADMIN') and #username == 'abcd'")
-	List<User> findByUsername(@Param("username")String username);
-	
-	
+	List<User> findByUsername(@Param("username") String username);
+
 }
