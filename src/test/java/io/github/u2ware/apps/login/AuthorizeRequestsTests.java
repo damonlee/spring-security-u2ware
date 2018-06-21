@@ -23,7 +23,7 @@ import io.github.u2ware.apps.Application;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=Application.class)
-public class SecurityAuthorizeRequestsTests {
+public class AuthorizeRequestsTests {
 
 	protected Log logger = LogFactory.getLog(getClass());
 	
@@ -70,7 +70,7 @@ public class SecurityAuthorizeRequestsTests {
 	public UserAccount newUserAccount(String username, String... roles) {
 		UserAccount u = new UserAccount();
 		u.setUsername(username);
-		u.setRoles(roles);
+		u.setAuthoritiesValue(roles);
 		return u;
 	}
 	

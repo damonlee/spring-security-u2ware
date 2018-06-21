@@ -115,7 +115,7 @@ public class UserRestRepositoryTests {
 		u.setUsername(username);
 		u.setPassword("password");
 		u.setNickname(nickname);
-		u.setRoles(roles);
+		u.setAuthoritiesValue(roles);
 		return u;
 	}
 	

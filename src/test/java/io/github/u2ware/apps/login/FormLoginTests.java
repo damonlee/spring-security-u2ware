@@ -22,7 +22,7 @@ import io.github.u2ware.apps.Application;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=Application.class)
-public class SecurityFormLoginTests {
+public class FormLoginTests {
 
 	protected Log logger = LogFactory.getLog(getClass());
 	

@@ -39,7 +39,7 @@ public class UserAccountService implements UserDetailsService {
 			UserAccount u = new UserAccount();
 			u.setUsername(securityUserName);
 			u.setPassword(userPasswordEncoder.encode(securityUserPass));
-			u.setRoles(securityUserRole);
+			u.setAuthoritiesValue(securityUserRole);
 			return userAccountRepository.save(u);
 		}
 		return null;

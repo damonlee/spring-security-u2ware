@@ -1,4 +1,4 @@
-package io.github.u2ware.apps.login;
+package io.github.u2ware.apps;
 
 import java.util.Arrays;
 
@@ -8,13 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.AuthenticationHandler;
+import org.springframework.security.web.authentication.UserDetailsServiceDelegate;
 import org.springframework.security.web.authentication.rememberme.PersistentHeaderBasedRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -22,6 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled=true, securedEnabled=true, jsr250Enabled=true)
+@SuppressWarnings("deprecation")
 public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -29,14 +36,14 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 	private String rememberMeKey = "Custom RememberMe Authentication Provider Key";
 	
 	private @Value("${spring.data.rest.base-path:}") String springDataRestBasePath;
-	private @Autowired UserAccountService userAccountService;
-	private @Autowired UserTokenService userTokenService;
-	private @Autowired UserEventService userEventService;
-	private @Autowired UserPasswordEncoder userPasswordEncoder;
+	private @Autowired UserDetailsService[] userDetailsServices;
+	private @Autowired AuthenticationHandler authenticationHandler;
+	private @Autowired PersistentTokenRepository persistentTokenRepository;
+	private @Autowired SecurityPasswordEncoder passwordEncoder;
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userAccountService).passwordEncoder(userPasswordEncoder);
+		auth.userDetailsService(new UserDetailsServiceDelegate(userDetailsServices)).passwordEncoder(passwordEncoder);
 	}
 	
 	@Override
@@ -45,18 +52,18 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 		    	.csrf()
 		    		.disable()
 			.formLogin()
-				.successHandler(userEventService)
-				.failureHandler(userEventService)
+				.successHandler(authenticationHandler)
+				.failureHandler(authenticationHandler)
 				.permitAll()
 				.and()
 			.logout()
-				.logoutSuccessHandler(userEventService)
+				.logoutSuccessHandler(authenticationHandler)
 				.deleteCookies("JSESSIONID")
 				.permitAll()
 				.and()
 			.exceptionHandling()
-				.authenticationEntryPoint(userEventService)
-				.accessDeniedHandler(userEventService)
+				.authenticationEntryPoint(authenticationHandler)
+				.accessDeniedHandler(authenticationHandler)
 				.and()
 			.authorizeRequests()
 				.antMatchers(springDataRestBasePath+"/**").authenticated()
@@ -72,9 +79,9 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 				.rememberMeServices(
 						new PersistentHeaderBasedRememberMeServices(
 								rememberMeKey, 
-								userAccountService, 
-								userTokenService,
-								userEventService))
+								new UserDetailsServiceDelegate(userDetailsServices), 
+								persistentTokenRepository,
+								authenticationHandler))
 				.key(rememberMeKey)
 				.and()
 			.sessionManagement()
@@ -100,6 +107,19 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+    
+    @Component
+    public static class SecurityPasswordEncoder extends ShaPasswordEncoder {
+
+    	public SecurityPasswordEncoder(){
+    		super(256);
+    	}
+    	
+    	public String encode(String rawPass) {
+    		return super.encodePassword(rawPass, null);
+    	}
+    }
+    
 }
 
 //CorsFilter f1;

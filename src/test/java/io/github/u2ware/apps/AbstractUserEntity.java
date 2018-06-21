@@ -34,7 +34,7 @@ public abstract class AbstractUserEntity<V extends GrantedAuthority> implements 
 	public abstract V createAuthority(String authority);
 	
 	@Transient 
-	public void setRoles(String... roles){
+	public void setAuthoritiesValue(String... roles){
 		List<V> authorities = new ArrayList<V>();
 		for(String role : roles){
 			authorities.add(createAuthority(role));
@@ -44,7 +44,7 @@ public abstract class AbstractUserEntity<V extends GrantedAuthority> implements 
 	}
 
 	@Transient 
-	public String[] getRoles(){
+	public String[] getAuthoritiesValue(){
 		List<String> authorities = new ArrayList<String>();
 		for(V authority : getAuthorities()){
 			authorities.add(authority.getAuthority());
@@ -54,15 +54,4 @@ public abstract class AbstractUserEntity<V extends GrantedAuthority> implements 
 		return r;
 	}
 	 
-	public @Transient boolean hasRoles(String... roles){
-		for(V authority : getAuthorities()){
-			for(String role : roles) {
-				if(authority.getAuthority().equals(role)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
 }
