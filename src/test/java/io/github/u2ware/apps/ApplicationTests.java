@@ -25,6 +25,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.data.auditing.AuditingHandler;
 import org.springframework.data.mapping.context.PersistentEntities;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -79,45 +80,39 @@ public class ApplicationTests {
 	//////////////////////////////////////////////////////
 	protected String performCreate(String uri, UserDetails u, String content, ResultMatcher... matchers) throws Exception {
 		if(u == null) return performCreate(uri, content, matchers);
-		MvcResult r = perform(post(uri).with(user(u)).contentType(MediaType.APPLICATION_JSON_UTF8).content(content) ,  matchers);
-		return JsonPath.read(r.getResponse().getContentAsString(), "$._links.self.href");
+		return href(perform(post(uri).with(user(u)).contentType(MediaType.APPLICATION_JSON_UTF8).content(content) ,  matchers));
 	}
 	protected void performRead(String uri, UserDetails u, ResultMatcher... matchers) throws Exception {
-		if(u == null) performRead(uri, matchers);
-		else perform(get(uri).with(user(u)), matchers);
+		if(u == null) { performRead(uri, matchers); return; }
+		perform(get(uri).with(user(u)), matchers);
 	}
 	protected void performRead(String uri, UserDetails u, MultiValueMap<String, String> params, ResultMatcher... matchers) throws Exception {
-		if(u == null) performRead(uri, params, matchers);
-		else perform(get(uri).with(user(u)).params(params), matchers);
+		if(u == null) {performRead(uri, params, matchers); return; }
+		perform(get(uri).with(user(u)).params(params), matchers);
 	}
 	protected String performUpdate(String uri, UserDetails u, String content, ResultMatcher... matchers) throws Exception {
 		if(u == null) return performUpdate(uri, content, matchers);
-		MvcResult r = perform(patch(uri).with(user(u)).contentType(MediaType.APPLICATION_JSON_UTF8).content(content) ,  matchers);
-		return JsonPath.read(r.getResponse().getContentAsString(), "$._links.self.href");
+		return href(perform(patch(uri).with(user(u)).contentType(MediaType.APPLICATION_JSON_UTF8).content(content) ,  matchers));
 	}
 	protected void performDelete(String uri, UserDetails u, ResultMatcher... matchers) throws Exception {
-		if(u == null) performDelete(uri, matchers);
-		else perform(delete(uri).with(user(u)), matchers);
+		if(u == null) { performDelete(uri, matchers); return; }
+		perform(delete(uri).with(user(u)), matchers);
 	}
-	private String performCreate(String uri, String content, ResultMatcher... matchers) throws Exception {
-		MvcResult r = perform(post(uri).contentType(MediaType.APPLICATION_JSON_UTF8).content(content) ,  matchers);
-		return JsonPath.read(r.getResponse().getContentAsString(), "$._links.self.href");
+	protected String performCreate(String uri, String content, ResultMatcher... matchers) throws Exception {
+		return href(perform(post(uri).contentType(MediaType.APPLICATION_JSON_UTF8).content(content) ,  matchers));
 	}
-	private void performRead(String uri, ResultMatcher... matchers) throws Exception {
+	protected void performRead(String uri, ResultMatcher... matchers) throws Exception {
 		perform(get(uri), matchers);
 	}
-	private void performRead(String uri, MultiValueMap<String, String> params, ResultMatcher... matchers) throws Exception {
+	protected void performRead(String uri, MultiValueMap<String, String> params, ResultMatcher... matchers) throws Exception {
 		perform(get(uri).params(params), matchers);
 	}
-	private String performUpdate(String uri, String content, ResultMatcher... matchers) throws Exception {
-		MvcResult r = perform(patch(uri).contentType(MediaType.APPLICATION_JSON_UTF8).content(content) ,  matchers);
-		return JsonPath.read(r.getResponse().getContentAsString(), "$._links.self.href");
+	protected String performUpdate(String uri, String content, ResultMatcher... matchers) throws Exception {
+		return href(perform(patch(uri).contentType(MediaType.APPLICATION_JSON_UTF8).content(content) ,  matchers));
 	}
-	private void performDelete(String uri, ResultMatcher... matchers) throws Exception {
+	protected void performDelete(String uri, ResultMatcher... matchers) throws Exception {
 		perform(delete(uri), matchers);
 	}
-	
-	
 	private MvcResult perform(RequestBuilder requestBuilder, ResultMatcher... matchers) throws Exception {
 		ResultActions actions = this.mvc.perform(
 				requestBuilder
@@ -132,7 +127,14 @@ public class ApplicationTests {
 			}
 		}
 		return actions.andReturn();
-	}	
+	}
+	private String href(MvcResult r) throws Exception {
+		if(r.getResponse().getStatus() > HttpStatus.CHECKPOINT.value() && r.getResponse().getStatus() < HttpStatus.MULTIPLE_CHOICES.value()) {
+			return JsonPath.read(r.getResponse().getContentAsString(), "$._links.self.href");
+		}else {
+			return null;
+		}
+	}
 	
 	
 	//////////////////////////////////////////////////////
