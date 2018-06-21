@@ -10,7 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public interface UserRestRepository extends PagingAndSortingRepository<User, String>{
 
 
-	@PostAuthorize("returnObject.nickname == 'abcd'")
+	@PostAuthorize("(returnObject != null && returnObject.nickname == 'abcd') || returnObject == null")
 	User findOne(String id);
 	
 	

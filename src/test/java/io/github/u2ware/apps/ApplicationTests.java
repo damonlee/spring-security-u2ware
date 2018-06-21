@@ -9,9 +9,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -29,8 +26,6 @@ import org.springframework.data.auditing.AuditingHandler;
 import org.springframework.data.mapping.context.PersistentEntities;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -46,9 +41,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=Application.class)
@@ -159,39 +151,12 @@ public class ApplicationTests {
 		return map;
 	}
 
-	protected UserDetails account(String username, String... roles) {
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-		for(String role : roles) {
-			authorities.add(new UserAuthority(role));
-		}
-		User user = new User(username, username, authorities);
-		
-		logger.info(user);
-		logger.info(user.getPassword());
-		logger.info(user.getAuthorities());
-
-		return user;
-	}
-
-	@Data @AllArgsConstructor @SuppressWarnings("serial")
-	private static class UserAuthority implements GrantedAuthority{
-		private String authority;
-	}
-	
 	
 	//////////////////////////////////////////////////////
 	//
 	//////////////////////////////////////////////////////
 	@Test
 	public void contextLoads() throws Exception {
-		
-		this.mvc.perform(
-				get("/apis")
-			).andDo(
-				print()
-			).andExpect(
-				status().is2xxSuccessful()
-			);
 		
 		String [] a1 = context.getBeanNamesForType(DataSource.class);
 		for(String n : a1){
