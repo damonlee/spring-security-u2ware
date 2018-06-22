@@ -18,17 +18,27 @@ public class UserRestRepositoryTests extends ApplicationTests {
 		userRestRepository.save(user("abcd"));
 		userRestRepository.save(user("efgh"));
 
-		String h = "/users/search/findByUsername";
+//		String h = "/users/search/findByUsername";
+//
+//		super.performRead(uri(h), new UserDetailsDelegate("u1"),               params("username=abcd"), status().is4xxClientError());
+//		super.performRead(uri(h), new UserDetailsDelegate("u1", "ROLE_ADMIN"), params("username=efgh"), status().is4xxClientError());
+//		super.performRead(uri(h), new UserDetailsDelegate("u1", "ROLE_ADMIN"), params("username=abcd"), status().is2xxSuccessful());
+//
+//		super.performRead(uri("/users"),      new UserDetailsDelegate("u1"), status().is2xxSuccessful());
+//		super.performRead(uri("/users/abcd"), new UserDetailsDelegate("u1"), status().is2xxSuccessful());
+//		super.performRead(uri("/users/efgh"), new UserDetailsDelegate("u1"), status().is4xxClientError()); // 401
+//		super.performRead(uri("/users/ijkl"), new UserDetailsDelegate("u1"), status().is4xxClientError()); // 404
 
-		super.performRead(uri(h), new UserDetailsDelegate("u1"),               params("username=abcd"), status().is4xxClientError());
-		super.performRead(uri(h), new UserDetailsDelegate("u1", "ROLE_ADMIN"), params("username=efgh"), status().is4xxClientError());
-		super.performRead(uri(h), new UserDetailsDelegate("u1", "ROLE_ADMIN"), params("username=abcd"), status().is2xxSuccessful());
+		super.performRead(uri("/users/s/findByUsername"), new UserDetailsDelegate("some"), params("username=abcd"), status().is4xxClientError()); // 401
+		super.performRead(uri("/users/s/findByUsername"), new UserDetailsDelegate("some", "ROLE_ADMIN"), params("username=abcd"), status().is2xxSuccessful());
 
-		super.performRead(uri("/users"),      new UserDetailsDelegate("u1"), status().is2xxSuccessful());
-		super.performRead(uri("/users/abcd"), new UserDetailsDelegate("u1"), status().is2xxSuccessful());
-		super.performRead(uri("/users/efgh"), new UserDetailsDelegate("u1"), status().is4xxClientError()); // 401
-		super.performRead(uri("/users/ijkl"), new UserDetailsDelegate("u1"), status().is4xxClientError()); // 404
+//		super.performRead(uri("/users/search/findByUsername"), new UserDetailsDelegate("some", "ROLE_ADMIN"), status().is4xxClientError()); // 401
+//		super.performRead(uri("/users/search/findByUsername"), new UserDetailsDelegate("some", "ROLE_ADMIN"), status().is4xxClientError()); // 401
 
+//		super.performRead(uri("/users/s/findByUsername"), new UserDetailsDelegate("u1"), status().is4xxClientError()); // 404
+//		super.performRead(uri("/users/s/findByUsername"), new UserDetailsDelegate("u1"), status().is4xxClientError()); // 404
+//		super.performRead(uri("/users/s/findByUsername"), new UserDetailsDelegate("u1"), status().is4xxClientError()); // 404
+//		super.performRead(uri("/users/s/findByUsername"), new UserDetailsDelegate("u1"), status().is4xxClientError()); // 404
 		userRestRepository.deleteAll();
 	}
 
