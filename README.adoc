@@ -40,8 +40,9 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(new UserDetailsServiceDelegate(userDetailsServices));
     }
-    .
-    .
-    .
+
 ----
 
+== License
+Spring Security U2ware is Open Source software released under the
+http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].
