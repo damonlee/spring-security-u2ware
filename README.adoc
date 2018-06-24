@@ -22,10 +22,10 @@ spring-security-u2ware 는 spring-security 를 기반으로 동작하는 부가�
 spring-security 는 Cookie 에 저장된 Token 값을 분석하여 `RememberMeServices` 를 구현하는 
 `TokenBasedRememberMeServices` 와 `PersistentTokenBasedRememberMeServices` 를 제공하고 있습니다.
 
-이와 동일한 방식으로 Cookie 대신에 Header 를 이용하여 `RememberMeServices` 를 구현한 link:tree/master/src/main/org/springframework/security/web/authentication/rememberme/HeaderBasedRememberMeServices.java[HeaderBasedRememberMeServices] 와 link:tree/master/src/main/org/springframework/security/web/authentication/rememberme/PersistentHeaderBasedRememberMeServices.java[PersistentHeaderBasedRememberMeServices] 를 제공합니다.
+이와 동일한 방식으로 Cookie 대신에 Header 를 이용하여 `RememberMeServices` 를 구현한 link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/HeaderBasedRememberMeServices.java[HeaderBasedRememberMeServices] 와 link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/org/springframework/security/web/authentication/rememberme/PersistentHeaderBasedRememberMeServices.java[PersistentHeaderBasedRememberMeServices] 를 제공합니다.
 
 == UserDetailsServiceDelegate
 
-어플리케이션 내에서 `UserDetailsService` 를 여러 다양한 로직으로 구현하였을 때, spring-security 를 설정에서 사용할 수 있는 link:tree/master/src/main/org/springframework/security/web/authentication/UserDetailsServiceDelegate.java[UserDetailsServiceDelegate] 를 제공합니다.
+어플리케이션 내에서 `UserDetailsService` 를 여러 다양한 로직으로 구현하였을 때, spring-security 설정에서 사용할 수 있는 link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/org/springframework/security/web/authentication/UserDetailsServiceDelegate.java[UserDetailsServiceDelegate] 를 제공합니다.
 
 
