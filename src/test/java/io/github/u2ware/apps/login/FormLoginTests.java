@@ -15,6 +15,16 @@ public class FormLoginTests extends ApplicationTests{
 
 		this.mvc.perform(
 				post("/login")
+				.param("username", "hello")
+				.param("password", "world")
+			).andDo(
+				print()
+			).andExpect(
+				status().is4xxClientError()
+			);
+
+		this.mvc.perform(
+				post("/login")
 				.param("username", securityUserName)
 				.param("password", securityUserPass)
 			).andDo(

@@ -16,6 +16,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,7 +34,7 @@ public class UserEventService implements AuthenticationHandler {
 		logger.info(request.getRequestURL() + " [onAuthenticationSuccess]: " + authentication);
 		processAuthenticationSuccess(request, response, authentication);
 		Object message = retrieveUserDetails(authentication);
-		sendResponse(response, HttpServletResponse.SC_OK, message);
+		sendResponse(request, response, HttpServletResponse.SC_OK, message);
 	}
 
 	@Override
@@ -41,7 +42,7 @@ public class UserEventService implements AuthenticationHandler {
 			AuthenticationException exception) throws IOException, ServletException {
 		logger.info(request.getRequestURL() + " [onAuthenticationFailure]: " + exception);
 		processAuthenticationFailure(request, response, exception);
-		sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, exception);
+		sendResponse(request, response, HttpServletResponse.SC_UNAUTHORIZED, exception);
 	}
 
 	@Override
@@ -52,7 +53,7 @@ public class UserEventService implements AuthenticationHandler {
 			processLogoutSuccess(request, response, authentication);
 		}
 		Object message = retrieveUserDetails(authentication);
-		sendResponse(response, HttpServletResponse.SC_OK, message);
+		sendResponse(request, response, HttpServletResponse.SC_OK, message);
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class UserEventService implements AuthenticationHandler {
 			AccessDeniedException accessDeniedException) throws IOException, ServletException {
 		logger.info(request.getRequestURL() + " [handle]: " + accessDeniedException);
 		processExceptionCaught(request, response, accessDeniedException);
-		sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, accessDeniedException.getMessage());
+		sendResponse(request, response, HttpServletResponse.SC_UNAUTHORIZED, accessDeniedException.getMessage());
 	}
 
 	@Override
@@ -68,7 +69,7 @@ public class UserEventService implements AuthenticationHandler {
 			AuthenticationException authException) throws IOException, ServletException {
 		logger.info(request.getRequestURL() + "[commence]: " + authException);
 		processExceptionCaught(request, response, authException);
-		sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+		sendResponse(request, response, HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
 	}
 
 	public void processAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -104,15 +105,14 @@ public class UserEventService implements AuthenticationHandler {
 		}
 	}
 
-	protected void sendResponse(HttpServletResponse response, int status, Throwable e) throws IOException {
-		response.sendError(status, e.getMessage());
-	}
-
-	protected void sendResponse(HttpServletResponse response, int status, Object object) throws IOException {
+	protected void sendResponse(HttpServletRequest request, HttpServletResponse response, int status, Object body) throws IOException {
+		if(ClassUtils.isAssignableValue(Throwable.class, body)){
+			logger.info(request.getRequestURL(), (Throwable)body);
+		}
 		response.setContentType("application/json;charset=UTF-8");
 		response.setStatus(status);
 		PrintWriter writer = response.getWriter();
-		writer.write(objectMapper.writeValueAsString(object));
+		writer.write(objectMapper.writeValueAsString(body));
 		writer.flush();
 		writer.close();
 	}
