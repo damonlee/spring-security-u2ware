@@ -33,7 +33,7 @@ public class UserRestRepositoryTests extends ApplicationTests {
 		super.performRead(uri("/users/!q/findByUsername"), new UserDetailsDelegate("u1", "ROLE_ADMIN"), status().is2xxSuccessful());
 		super.performRead(uri("/users/!q"), new UserDetailsDelegate("u1", "ROLE_ADMIN"), status().is2xxSuccessful());
 
-		//super.performRead(uri("/users/!q/hello"), new UserDetailsDelegate("u1", "ROLE_ADMIN"), status().is5xxServerError());
+		super.performRead(uri("/users/!q/hello"), new UserDetailsDelegate("u1", "ROLE_ADMIN"), status().is5xxServerError());
 
 		userRestRepository.deleteAll();
 	}

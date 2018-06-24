@@ -9,6 +9,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -26,6 +28,9 @@ public class Application{
 		@ExceptionHandler
 		public ResponseEntity<?> error(Exception exception, HttpServletRequest request) {
 			logger.info(request.getRequestURL(), exception);
+			if(ClassUtils.isAssignableValue(AccessDeniedException.class, exception)) {
+				return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+			}
 			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
