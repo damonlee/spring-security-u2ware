@@ -2,21 +2,25 @@
 
 spring-security-u2ware 는 spring-security 를 기반으로 동작하는 부가적인 기능을 추가한 라이브러리입니다.
 
-== Installation
+== Installation (POM)
 [source,xml,indent=0]
 ----
-        <repository>
-            <id>u2ware-mvm-repo</id>
-            <url>https://raw.github.com/u2ware/u2ware.github.com/mvn-repo/</url>
-        </repository>
-        .
-        .
-        <dependency>
-            <groupId>io.github.u2ware</groupId>
-            <artifactId>spring-security-u2ware</artifactId>
-            <version>1.5.13.RELEASE</version>
-        </dependency>
-        .
-        .
+<repository>
+    <id>u2ware-mvm-repo</id>
+    <url>https://raw.github.com/u2ware/u2ware.github.com/mvn-repo/</url>
+</repository>
+
+<dependency>
+    <groupId>io.github.u2ware</groupId>
+    <artifactId>spring-security-u2ware</artifactId>
+    <version>1.5.13.RELEASE</version>
+</dependency>
 ----
 
+== HeaderBasedRememberMeServices , PersistentHeaderBasedRememberMeServices
+
+spring-security 는 Cookie 에 저장된 Token 값을 분석하여 RememberMeServices 를 구현하는 
+`TokenBasedRememberMeServices` 와 `PersistentTokenBasedRememberMeServices` 를 제공하고 있습니다.
+
+이와 동일한 방식으로 Cookie 대신에 Header 를 이용하여 RememberMeServices 를 구현한  
+`HeaderBasedRememberMeServices` 와 `PersistentHeaderBasedRememberMeServices` 를 제공합니다.
