@@ -1,8 +1,6 @@
 = spring-security-u2ware
 
-spring-security 를 기반으로 동작하는 부가적인 기능을 추가한 라이브러리입니다.
-
-https://docs.spring.io/spring-boot/docs/1.5.13.RELEASE/reference/htmlsingle/[spring-boot-1.5.13.RELEASE] 에 의해 추가되는 https://docs.spring.io/spring-security/site/docs/4.2.6.RELEASE/reference/htmlsingle/[spring-security-4.2.6.RELEASE] 에 맞추어 개발되어 spring-boot 의 버전을 따르고 있습니다.
+spring-security 를 기반으로 동작하는 부가적인 기능을 추가한 라이브러리입니다. https://docs.spring.io/spring-boot/docs/1.5.13.RELEASE/reference/htmlsingle/[spring-boot-1.5.13.RELEASE] 에 의해 추가되는 https://docs.spring.io/spring-security/site/docs/4.2.6.RELEASE/reference/htmlsingle/[spring-security-4.2.6.RELEASE] 에 맞추어 개발되어 spring-boot 의 버전을 따르고 있습니다.
 
 == Installation (POM)
 [source,xml,indent=1]
@@ -19,12 +17,46 @@ https://docs.spring.io/spring-boot/docs/1.5.13.RELEASE/reference/htmlsingle/[spr
 </dependency>
 ----
 
-== PersistentHeaderBasedRememberMeServices 
+== RememberMeServices 
 
 spring-security 는 Cookie 에 저장된 Token 값을 분석하여 `RememberMeServices` 를 구현하는 
 `TokenBasedRememberMeServices` 와 `PersistentTokenBasedRememberMeServices` 를 제공하고 있습니다.
 
 이와 동일한 방식으로 Cookie 대신에 Header 를 이용하여 `RememberMeServices` 를 구현한 link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/HeaderBasedRememberMeServices.java[HeaderBasedRememberMeServices] 와 link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/PersistentHeaderBasedRememberMeServices.java[PersistentHeaderBasedRememberMeServices] 를 제공합니다.
+
+또한, 3rd-part SSO(Single Sign On) 제품과 연동하여 `RememberMeServices` 를 구현해야 할 때, link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/AbstractSimpleRememberMeServices.java[AbstractSimpleRememberMeServices] 를 제공합니다.   
+[source,java,indent=1]
+----
+public class Your_SSO_RememberMeService extends AbstractSimpleRememberMeServices {
+
+    @Override
+    protected UserDetails loadRememberMe(HttpServletRequest request, HttpServletResponse response) {
+        // 3rd-part SSO 를 이용하여 로그인 여부를 확인 합니다. 
+        return null;
+    }
+
+    @Override
+    protected void saveRememberMe(HttpServletRequest request, HttpServletResponse response,
+            Authentication successfulAuthentication) {
+        // (필요에 따라) 로그인 성공 후 정보를 3rd-part SSO 에 전달합니다. 
+    }
+
+    @Override
+    protected void cancelRememberMe(HttpServletRequest request, HttpServletResponse response) {
+        // TODO Auto-generated method stub
+        // (필요에 따라) 로그인 실패 후 정보를 3rd-part SSO 에 전달합니다. 
+    }
+
+}
+
+    private @Autowired UserDetailsService[] userDetailsServices;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(new UserDetailsServiceDelegate(userDetailsServices));
+    }
+
+----
 
 == UserDetailsServiceDelegate
 
