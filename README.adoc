@@ -24,7 +24,7 @@ spring-security 는 Cookie 에 저장된 Token 값을 분석하여 `RememberMeSe
 
 이와 동일한 방식으로 Cookie 대신에 Header 를 이용하여 `RememberMeServices` 를 구현한 link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/HeaderBasedRememberMeServices.java[HeaderBasedRememberMeServices] 와 link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/PersistentHeaderBasedRememberMeServices.java[PersistentHeaderBasedRememberMeServices] 를 제공합니다.
 
-또한, 3rd-part SSO(Single Sign On) 제품과 연동하여 `RememberMeServices` 를 구현해야 할 때, link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/AbstractSimpleRememberMeServices.java[AbstractSimpleRememberMeServices] 를 제공합니다.   
+또한, 3rd-part SSO(Single Sign On) 제품과 연동하여 `RememberMeServices` 를 구현해야 할 때, link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/AbstractSimpleRememberMeServices.java[AbstractSimpleRememberMeServices] 를 사용 할 수 있습니다.
 [source,java,indent=1]
 ----
 public class Your_SSO_RememberMeService extends AbstractSimpleRememberMeServices {
@@ -48,14 +48,6 @@ public class Your_SSO_RememberMeService extends AbstractSimpleRememberMeServices
     }
 
 }
-
-    private @Autowired UserDetailsService[] userDetailsServices;
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(new UserDetailsServiceDelegate(userDetailsServices));
-    }
-
 ----
 
 == UserDetailsServiceDelegate
