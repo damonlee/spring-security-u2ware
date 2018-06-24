@@ -1,6 +1,6 @@
-= Spring Security U2ware
+= spring-security-u2ware
 
-spring-security-u2ware 는 spring-security 를 기반으로 동작하는 부가적인 기능을 추가한 라이브러리입니다.
+spring-security 를 기반으로 동작하는 부가적인 기능을 추가한 라이브러리입니다.
 
 == Installation (POM)
 [source,xml,indent=1]
@@ -44,5 +44,5 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 ----
 
 == License
-Spring Security U2ware is Open Source software released under the
+spring-security-u2ware is Open Source software released under the
 http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].
