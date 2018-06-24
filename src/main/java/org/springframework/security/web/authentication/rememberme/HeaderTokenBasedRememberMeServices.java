@@ -6,9 +6,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
-public class HeaderBasedRememberMeServices extends TokenBasedRememberMeServices{
+public class HeaderTokenBasedRememberMeServices extends TokenBasedRememberMeServices{
 
-	public HeaderBasedRememberMeServices(String key, UserDetailsService userDetailsService) {
+	public HeaderTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService) {
 		super(key, userDetailsService);
 		super.setCookieName("Authorization");
 	}

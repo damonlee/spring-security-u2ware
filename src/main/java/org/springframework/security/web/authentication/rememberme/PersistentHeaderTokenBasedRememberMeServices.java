@@ -15,15 +15,15 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.util.StringUtils;
 
-public class PersistentHeaderBasedRememberMeServices extends PersistentTokenBasedRememberMeServices{
+public class PersistentHeaderTokenBasedRememberMeServices extends PersistentTokenBasedRememberMeServices{
 
 	private PersistentTokenRepository tokenRepository;
 	private LogoutSuccessHandler logoutSuccessHandler;
 	
-	public PersistentHeaderBasedRememberMeServices(String key, UserDetailsService userDetailsService, PersistentTokenRepository tokenRepository) {
+	public PersistentHeaderTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService, PersistentTokenRepository tokenRepository) {
 		this(key, userDetailsService, tokenRepository, null);
 	}
-	public PersistentHeaderBasedRememberMeServices(String key, UserDetailsService userDetailsService, PersistentTokenRepository tokenRepository, LogoutSuccessHandler logoutSuccessHandler) {
+	public PersistentHeaderTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService, PersistentTokenRepository tokenRepository, LogoutSuccessHandler logoutSuccessHandler) {
 		super(key, userDetailsService, tokenRepository);
 		super.setCookieName("Authorization");
 		this.tokenRepository = tokenRepository;

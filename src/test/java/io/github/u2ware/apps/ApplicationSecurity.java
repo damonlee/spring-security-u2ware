@@ -18,7 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationHandler;
 import org.springframework.security.web.authentication.UserDetailsServiceDelegate;
-import org.springframework.security.web.authentication.rememberme.PersistentHeaderBasedRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.PersistentHeaderTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
@@ -77,7 +77,7 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 				.and()
 			.rememberMe()
 				.rememberMeServices(
-						new PersistentHeaderBasedRememberMeServices(
+						new PersistentHeaderTokenBasedRememberMeServices(
 								rememberMeKey, 
 								new UserDetailsServiceDelegate(userDetailsServices), 
 								persistentTokenRepository,
