@@ -23,4 +23,4 @@ spring-security 는 Cookie 에 저장된 Token 값을 분석하여 `RememberMeSe
 `TokenBasedRememberMeServices` 와 `PersistentTokenBasedRememberMeServices` 를 제공하고 있습니다.
 
 이와 동일한 방식으로 Cookie 대신에 Header 를 이용하여 `RememberMeServices` 를 구현한  
-[HeaderBasedRememberMeServices](src/main/org/springframework/security/web/authentication/rememberme/HeaderBasedRememberMeServices.java) 와 [PersistentHeaderBasedRememberMeServices](src/main/org/springframework/security/web/authentication/rememberme/PersistentHeaderBasedRememberMeServices.java) 를 제공합니다.
+{src/main/org/springframework/security/web/authentication/rememberme/HeaderBasedRememberMeServices.java}[HeaderBasedRememberMeServices] 와 [PersistentHeaderBasedRememberMeServices](src/main/org/springframework/security/web/authentication/rememberme/PersistentHeaderBasedRememberMeServices.java) 를 제공합니다.
