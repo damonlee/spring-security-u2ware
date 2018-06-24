@@ -38,12 +38,12 @@ public class Your_SSO_RememberMeService extends AbstractSimpleRememberMeServices
     @Override
     protected void saveRememberMe(HttpServletRequest request, HttpServletResponse response,
             Authentication successfulAuthentication) {
-        // (필요에 따라) 로그인 성공 후 정보를 3rd-part SSO 에 전달합니다. 
+        // (필요에 따라) 로그인 성공 정보를 3rd-part SSO 에 전달합니다. 
     }
 
     @Override
     protected void cancelRememberMe(HttpServletRequest request, HttpServletResponse response) {
-        // (필요에 따라) 로그인 실패 후 정보를 3rd-part SSO 에 전달합니다. 
+        // (필요에 따라) 로그인 실패 또는 로그아웃 정보를 3rd-part SSO 에 전달합니다. 
     }
 
 }
