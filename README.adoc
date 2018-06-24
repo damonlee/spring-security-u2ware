@@ -22,9 +22,9 @@ spring-security 를 기반으로 동작하는 부가적인 기능을 추가한 �
 spring-security 는 Cookie 에 저장된 Token 값을 분석하여 `RememberMeServices` 를 구현하는 
 `TokenBasedRememberMeServices` 와 `PersistentTokenBasedRememberMeServices` 를 제공하고 있습니다.
 
-이와 동일한 방식으로 Cookie 대신에 Header 를 이용하여 `RememberMeServices` 를 구현한 link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/HeaderBasedRememberMeServices.java[HeaderBasedRememberMeServices] 와 link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/PersistentHeaderBasedRememberMeServices.java[PersistentHeaderBasedRememberMeServices] 를 제공합니다.
+이와 동일한 방식으로 Cookie 대신에 Header 를 이용하여 `RememberMeServices` 를 구현한 link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/HeaderTokenBasedRememberMeServices.java[HeaderTokenBasedRememberMeServices] 와 link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/PersistentHeaderTokenBasedRememberMeServices.java[PersistentHeaderTokenBasedRememberMeServices] 를 제공합니다.
 
-또한, 3rd-part SSO(Single Sign On) 제품과 연동하여 `RememberMeServices` 를 구현해야 할 때, link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/AbstractSimpleRememberMeServices.java[AbstractSimpleRememberMeServices] 를 사용 할 수 있습니다.
+또한, 3rd-part SSO(Single Sign On) 제품과 연동하여 `RememberMeServices` 를 구현해야 할 때, link:https://github.com/u2ware/spring-security-u2ware/tree/master/src/main/java/org/springframework/security/web/authentication/rememberme/AbstractSimpleRememberMeServices.java[AbstractSimpleRememberMeServices] 를 상속 받아서 구현 할 수 있습니다.
 [source,java,indent=1]
 ----
 public class Your_SSO_RememberMeService extends AbstractSimpleRememberMeServices {
