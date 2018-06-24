@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
-public class HeaderTokenBasedRememberMeServices extends TokenBasedRememberMeServices{
+public class HeaderTokenBasedRememberMeServices extends TokenBasedRememberMeServices {
 
 	public HeaderTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService) {
 		super(key, userDetailsService);
@@ -31,6 +31,6 @@ public class HeaderTokenBasedRememberMeServices extends TokenBasedRememberMeServ
 
 	@Override
 	protected void cancelCookie(HttpServletRequest request, HttpServletResponse response) {
-		//Do nothing...
+		// Do nothing...
 	}
 }

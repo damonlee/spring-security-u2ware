@@ -26,7 +26,7 @@ import org.springframework.security.web.authentication.rememberme.InvalidCookieE
 import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationException;
 import org.springframework.util.ReflectionUtils;
 
-public abstract class AbstractSimpleRememberMeServices implements RememberMeServices, LogoutHandler{
+public abstract class AbstractSimpleRememberMeServices implements RememberMeServices, LogoutHandler {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -38,6 +38,7 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 	public String getKey() {
 		return key;
 	}
+
 	public void setKey(String key) {
 		this.key = key;
 	}
@@ -52,27 +53,28 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 			auth.setDetails(authenticationDetailsSource.buildDetails(request));
 			return auth;
 
-		}catch (CookieTheftException cte) {
+		} catch (CookieTheftException cte) {
 			cancelRememberMe(request, response);
 			throw cte;
-		}catch (UsernameNotFoundException noUser) {
+		} catch (UsernameNotFoundException noUser) {
 			logger.debug("Remember-me login was valid but corresponding user not found.", noUser);
-		}catch (InvalidCookieException invalidCookie) {
+		} catch (InvalidCookieException invalidCookie) {
 			logger.debug("Invalid remember-me cookie: " + invalidCookie.getMessage());
-		}catch (AccountStatusException statusInvalid) {
+		} catch (AccountStatusException statusInvalid) {
 			logger.debug("Invalid UserDetails: " + statusInvalid.getMessage());
-		}catch (RememberMeAuthenticationException e) {
+		} catch (RememberMeAuthenticationException e) {
 			logger.debug(e.getMessage());
 		}
 		cancelRememberMe(request, response);
 		return null;
 	}
+
 	//////////////////////////////////////////////////
 	//
 	//////////////////////////////////////////////////
 	@Override
 	public void loginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth) {
-		logger.debug("Login of user "+ (auth == null ? "Unknown" : auth.getName()));
+		logger.debug("Login of user " + (auth == null ? "Unknown" : auth.getName()));
 		saveRememberMe(request, response, auth);
 	}
 
@@ -84,7 +86,7 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-		logger.debug("Logout of user "+ (authentication == null ? "Unknown" : authentication.getName()));
+		logger.debug("Logout of user " + (authentication == null ? "Unknown" : authentication.getName()));
 		cancelRememberMe(request, response);
 	}
 
@@ -92,8 +94,11 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 	//
 	////////////////////////
 	protected abstract UserDetails loadRememberMe(HttpServletRequest request, HttpServletResponse response);
-	protected abstract void saveRememberMe(HttpServletRequest request, HttpServletResponse response, Authentication successfulAuthentication) ;
-	protected abstract void cancelRememberMe(HttpServletRequest request, HttpServletResponse response) ;
+
+	protected abstract void saveRememberMe(HttpServletRequest request, HttpServletResponse response,
+			Authentication successfulAuthentication);
+
+	protected abstract void cancelRememberMe(HttpServletRequest request, HttpServletResponse response);
 
 	////////////////////////////////////////////////////////////////////
 	//
@@ -101,22 +106,22 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 	protected String retrieveUserName(Authentication authentication) {
 		if (isInstanceOfUserDetails(authentication)) {
 			return ((UserDetails) authentication.getPrincipal()).getUsername();
-		}
-		else {
+		} else {
 			return authentication.getPrincipal().toString();
 		}
 	}
+
 	protected String retrievePassword(Authentication authentication) {
 		if (isInstanceOfUserDetails(authentication)) {
 			return ((UserDetails) authentication.getPrincipal()).getPassword();
-		}
-		else {
+		} else {
 			if (authentication.getCredentials() == null) {
 				return null;
 			}
 			return authentication.getCredentials().toString();
 		}
 	}
+
 	private boolean isInstanceOfUserDetails(Authentication authentication) {
 		return authentication.getPrincipal() instanceof UserDetails;
 	}
@@ -124,13 +129,18 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 	/////////////////////////////////////////////////////////////////////
 	//
 	/////////////////////////////////////////////////////////////////////
-	protected void addCookie(HttpServletRequest request, HttpServletResponse response, String cookieName, String cookieValue, int maxAge) {
+	protected void addCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,
+			String cookieValue, int maxAge) {
 		addCookie(request, response, cookieName, cookieValue, maxAge, null, null);
 	}
-	protected void addCookie(HttpServletRequest request, HttpServletResponse response, String cookieName, String cookieValue, int maxAge, String cookieDomain) {
+
+	protected void addCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,
+			String cookieValue, int maxAge, String cookieDomain) {
 		addCookie(request, response, cookieName, cookieValue, maxAge, cookieDomain, null);
 	}
-	protected void addCookie(HttpServletRequest request, HttpServletResponse response, String cookieName, String cookieValue, int maxAge, String cookieDomain, Boolean useSecureCookie) {
+
+	protected void addCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,
+			String cookieValue, int maxAge, String cookieDomain, Boolean useSecureCookie) {
 
 		logger.debug("addCookie");
 
@@ -145,11 +155,12 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 		}
 		cookie.setSecure(useSecureCookie == null ? request.isSecure() : useSecureCookie);
 
-		Method setHttpOnlyMethod = ReflectionUtils.findMethod(Cookie.class, "setHttpOnly",boolean.class);
-		if(setHttpOnlyMethod != null) {
+		Method setHttpOnlyMethod = ReflectionUtils.findMethod(Cookie.class, "setHttpOnly", boolean.class);
+		if (setHttpOnlyMethod != null) {
 			ReflectionUtils.invokeMethod(setHttpOnlyMethod, cookie, Boolean.TRUE);
-		}else if (logger.isDebugEnabled()) {
-			logger.debug("Note: Cookie will not be marked as HttpOnly because you are not using Servlet 3.0 (Cookie#setHttpOnly(boolean) was not found).");
+		} else if (logger.isDebugEnabled()) {
+			logger.debug(
+					"Note: Cookie will not be marked as HttpOnly because you are not using Servlet 3.0 (Cookie#setHttpOnly(boolean) was not found).");
 		}
 		response.addCookie(cookie);
 	}
@@ -157,7 +168,9 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 	protected void removeCookie(HttpServletRequest request, HttpServletResponse response, String cookieName) {
 		removeCookie(request, response, cookieName, null);
 	}
-	protected void removeCookie(HttpServletRequest request, HttpServletResponse response, String cookieName, String cookieDomain) {
+
+	protected void removeCookie(HttpServletRequest request, HttpServletResponse response, String cookieName,
+			String cookieDomain) {
 
 		logger.debug("removeCookie");
 		Cookie cookie = new Cookie(cookieName, null);

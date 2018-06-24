@@ -15,15 +15,18 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.util.StringUtils;
 
-public class PersistentHeaderTokenBasedRememberMeServices extends PersistentTokenBasedRememberMeServices{
+public class PersistentHeaderTokenBasedRememberMeServices extends PersistentTokenBasedRememberMeServices {
 
 	private PersistentTokenRepository tokenRepository;
 	private LogoutSuccessHandler logoutSuccessHandler;
-	
-	public PersistentHeaderTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService, PersistentTokenRepository tokenRepository) {
+
+	public PersistentHeaderTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService,
+			PersistentTokenRepository tokenRepository) {
 		this(key, userDetailsService, tokenRepository, null);
 	}
-	public PersistentHeaderTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService, PersistentTokenRepository tokenRepository, LogoutSuccessHandler logoutSuccessHandler) {
+
+	public PersistentHeaderTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService,
+			PersistentTokenRepository tokenRepository, LogoutSuccessHandler logoutSuccessHandler) {
 		super(key, userDetailsService, tokenRepository);
 		super.setCookieName("Authorization");
 		this.tokenRepository = tokenRepository;
@@ -38,36 +41,36 @@ public class PersistentHeaderTokenBasedRememberMeServices extends PersistentToke
 	@Override
 	protected String extractRememberMeCookie(HttpServletRequest request) {
 		String headerValue = request.getHeader(super.getCookieName());
-		if(StringUtils.hasLength(headerValue))
-			logger.info("Remember-me cookie detecteing..."+"["+request.getMethod()+"]"+request.getRequestURL());
+		if (StringUtils.hasLength(headerValue))
+			logger.info("Remember-me cookie detecteing..." + "[" + request.getMethod() + "]" + request.getRequestURL());
 		return headerValue;
 	}
-	
+
 	@Override
 	protected void setCookie(String[] tokens, int maxAge, HttpServletRequest request, HttpServletResponse response) {
 		String headerValue = encodeCookie(tokens);
 		response.setHeader(super.getCookieName(), headerValue);
-		logger.info("Remember-me cookie accepting..."+"["+request.getMethod()+"]"+request.getRequestURL());
+		logger.info("Remember-me cookie accepting..." + "[" + request.getMethod() + "]" + request.getRequestURL());
 	}
 
 	@Override
 	protected void cancelCookie(HttpServletRequest request, HttpServletResponse response) {
-		//Do nothing...
+		// Do nothing...
 	}
-	
+
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-		logger.info("Remember-me cookie Logout..."+"["+request.getMethod()+"]"+request.getRequestURL());
+		logger.info("Remember-me cookie Logout..." + "[" + request.getMethod() + "]" + request.getRequestURL());
 		super.logout(request, response, authentication);
 
 		if (authentication == null) {
 			PersistentRememberMeToken token = extractRememberMeToken(request);
-			logger.info("Remember-me cookie Logout..."+token);
+			logger.info("Remember-me cookie Logout..." + token);
 
-			if(token != null) {
+			if (token != null) {
 				tokenRepository.removeUserTokens(token.getUsername());
 
-				if(logoutSuccessHandler != null) {
+				if (logoutSuccessHandler != null) {
 					try {
 						Authentication auth = new TestingAuthenticationToken(token.getUsername(), null);
 						logoutSuccessHandler.onLogoutSuccess(request, response, auth);
@@ -83,7 +86,7 @@ public class PersistentHeaderTokenBasedRememberMeServices extends PersistentToke
 
 	protected PersistentRememberMeToken extractRememberMeToken(HttpServletRequest request) {
 		String extractRememberMeCookie = request.getHeader(super.getCookieName());
-		if(StringUtils.hasLength(extractRememberMeCookie)) {
+		if (StringUtils.hasLength(extractRememberMeCookie)) {
 			String[] cookieTokens = decodeCookie(extractRememberMeCookie);
 			return tokenRepository.getTokenForSeries(cookieTokens[0]);
 		}
