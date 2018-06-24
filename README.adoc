@@ -1,6 +1,6 @@
 = spring-security-u2ware
 
-spring-security 기반에서 여러 추가 기능이 포함된 라이브러리입니다. https://docs.spring.io/spring-boot/docs/1.5.13.RELEASE/reference/htmlsingle/[spring-boot-1.5.13.RELEASE] 에 의해 추가되는 https://docs.spring.io/spring-security/site/docs/4.2.6.RELEASE/reference/htmlsingle/[spring-security-4.2.6.RELEASE] 에 맞추어 개발되어 spring-boot 의 버전을 따르고 있습니다.
+https://docs.spring.io/spring-boot/docs/1.5.13.RELEASE/reference/htmlsingle/[spring-boot-1.5.13.RELEASE] 에 의해 추가되는 https://docs.spring.io/spring-security/site/docs/4.2.6.RELEASE/reference/htmlsingle/[spring-security-4.2.6.RELEASE] 에 맞추어 개발되어 spring-boot 의 버전을 따르고 있습니다.
 
 == Installation (POM)
 [source,xml,indent=1]
