@@ -1,4 +1,4 @@
-package io.github.u2ware.sample.accounts.logs;
+package io.github.u2ware.sample.account.logs;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

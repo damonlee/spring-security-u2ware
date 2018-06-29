@@ -1,4 +1,4 @@
-package io.github.u2ware.sample.accounts.logs;
+package io.github.u2ware.sample.account.logs;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
