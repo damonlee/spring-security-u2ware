@@ -19,7 +19,6 @@ public class JoinService {
 
 	private @Value("${io.github.u2ware.sample.register.JoinService.roles:ROLE_USER}") String[] roles;
 	private @Value("${io.github.u2ware.sample.register.JoinService.enabled:true}") Boolean enabled;
-	private @Value("${io.github.u2ware.sample.register.JoinService.notify:false}") Boolean notify;
 
 	private @Autowired UserAccountPasswordEncoder encoder;
 	private @Autowired UserAccountRepository repository;
@@ -40,4 +39,13 @@ public class JoinService {
 		return repository.save(e);
 	}
 
+	public boolean userVerify(UUID uuid) {
+
+		UserAccount u = repository.findOne(uuid);
+		if (u == null)
+			return false;
+		u.setEnabled(true);
+		repository.save(u);
+		return true;
+	}
 }

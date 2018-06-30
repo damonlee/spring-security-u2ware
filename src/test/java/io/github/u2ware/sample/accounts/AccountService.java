@@ -25,7 +25,6 @@ public class AccountService {
 
 	private @Value("${io.github.u2ware.sample.accounts.AccountService.roles:ROLE_USER}") String[] roles;
 	private @Value("${io.github.u2ware.sample.accounts.AccountService.enabled:true}") Boolean enabled;
-	private @Value("${io.github.u2ware.sample.accounts.AccountService.notify:false}") Boolean notify;
 
 	private @Autowired UserAccountPasswordEncoder encoder;
 	private @Autowired UserAccountRepository repository;
@@ -47,7 +46,7 @@ public class AccountService {
 			e.setNickname(e.getUsername());
 		if (e.getRoles().length == 0)
 			e.setRoles(roles);
-		e.setEnabled(true);
+		e.setEnabled(enabled);
 	}
 
 	@HandleBeforeSave
