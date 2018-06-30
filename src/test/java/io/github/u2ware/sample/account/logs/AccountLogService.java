@@ -7,8 +7,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
-import io.github.u2ware.sample.sign.UserAccountPrincipalDelegate;
-import io.github.u2ware.sample.sign.UserAuthority;
+import io.github.u2ware.sample.signin.UserAccountPrincipalDelegate;
+import io.github.u2ware.sample.signin.UserAuthority;
 
 @Component
 @RepositoryEventHandler(AccountLog.class)

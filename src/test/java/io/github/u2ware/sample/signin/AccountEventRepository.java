@@ -1,4 +1,4 @@
-package io.github.u2ware.sample.sign;
+package io.github.u2ware.sample.signin;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RestResource;

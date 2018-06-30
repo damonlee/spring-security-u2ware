@@ -1,4 +1,4 @@
-package io.github.u2ware.sample.sign;
+package io.github.u2ware.sample.signin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

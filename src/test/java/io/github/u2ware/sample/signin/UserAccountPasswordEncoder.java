@@ -1,4 +1,4 @@
-package io.github.u2ware.sample.sign;
+package io.github.u2ware.sample.signin;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

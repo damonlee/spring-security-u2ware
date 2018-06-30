@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import io.github.u2ware.sample.ApplicationTests;
-import io.github.u2ware.sample.sign.UserAccountPrincipalImpl;
+import io.github.u2ware.sample.signin.UserAccountPrincipalImpl;
 
 public class AccountTests extends ApplicationTests {
 

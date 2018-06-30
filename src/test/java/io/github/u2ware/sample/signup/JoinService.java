@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import io.github.u2ware.sample.sign.UserAccount;
-import io.github.u2ware.sample.sign.UserAccountPasswordEncoder;
-import io.github.u2ware.sample.sign.UserAccountRepository;
+import io.github.u2ware.sample.signin.UserAccount;
+import io.github.u2ware.sample.signin.UserAccountPasswordEncoder;
+import io.github.u2ware.sample.signin.UserAccountRepository;
 
 @Service
 public class JoinService {

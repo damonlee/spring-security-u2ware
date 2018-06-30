@@ -1,4 +1,4 @@
-package io.github.u2ware.sample.sign;
+package io.github.u2ware.sample.signin;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

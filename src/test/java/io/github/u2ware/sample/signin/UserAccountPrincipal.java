@@ -1,4 +1,4 @@
-package io.github.u2ware.sample.sign;
+package io.github.u2ware.sample.signin;
 
 public interface UserAccountPrincipal {
 

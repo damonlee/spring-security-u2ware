@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import io.github.u2ware.sample.sign.UserAuthority.RoleSuperAuthorize;
+import io.github.u2ware.sample.signin.UserAuthority.RoleSuperAuthorize;
 
 @RoleSuperAuthorize
 public interface AccountRepository 

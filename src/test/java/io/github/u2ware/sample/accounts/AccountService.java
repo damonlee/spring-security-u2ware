@@ -13,9 +13,9 @@ import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import io.github.u2ware.sample.sign.UserAccount;
-import io.github.u2ware.sample.sign.UserAccountPasswordEncoder;
-import io.github.u2ware.sample.sign.UserAccountRepository;
+import io.github.u2ware.sample.signin.UserAccount;
+import io.github.u2ware.sample.signin.UserAccountPasswordEncoder;
+import io.github.u2ware.sample.signin.UserAccountRepository;
 
 @Component
 @RepositoryEventHandler(Account.class)

@@ -7,10 +7,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
-import io.github.u2ware.sample.sign.UserAccount;
-import io.github.u2ware.sample.sign.UserAccountPasswordEncoder;
-import io.github.u2ware.sample.sign.UserAccountPrincipalDelegate;
-import io.github.u2ware.sample.sign.UserAccountRepository;
+import io.github.u2ware.sample.signin.UserAccount;
+import io.github.u2ware.sample.signin.UserAccountPasswordEncoder;
+import io.github.u2ware.sample.signin.UserAccountPrincipalDelegate;
+import io.github.u2ware.sample.signin.UserAccountRepository;
 
 @Service("MyAccountService")
 public class AccountService {
