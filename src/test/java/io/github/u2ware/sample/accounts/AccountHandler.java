@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -48,7 +49,7 @@ public class AccountHandler extends Account implements Specification<Account> {
 	public void handleBeforeCreate(Account e) {
 		logger.info("handleBeforeCreate: " + e);
 		if (repository.existsByUsername(e.getUsername())) {
-			throw new RuntimeException("Username aleady exists.");
+			throw new AccessDeniedException("Username aleady exists.");
 		}
 		e.setUuid(UUID.randomUUID());
 		e.setPassword(encoder.encode(e.getUsername()));
