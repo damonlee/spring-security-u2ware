@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,9 +45,12 @@ public class Application {
 			logger.warn(message, exception);
 			logger.warn(ClassUtils.isAssignableValue(AccessDeniedException.class, exception));
 
-			HttpStatus status = ClassUtils.isAssignableValue(AccessDeniedException.class, exception)
-					|| ClassUtils.isAssignableValue(AuthenticationException.class, exception) ? HttpStatus.UNAUTHORIZED
-							: HttpStatus.INTERNAL_SERVER_ERROR;
+			HttpStatus status =
+					ClassUtils.isAssignableValue(AccessDeniedException.class, exception)
+					|| ClassUtils.isAssignableValue(AuthenticationException.class, exception) 
+					|| ClassUtils.isAssignableValue(InsufficientAuthenticationException.class, exception)
+					? HttpStatus.UNAUTHORIZED
+					: HttpStatus.INTERNAL_SERVER_ERROR;
 			return new ResponseEntity<Object>(message, status);
 		}
 	}
