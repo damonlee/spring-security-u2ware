@@ -39,13 +39,4 @@ public class JoinService {
 		return repository.save(e);
 	}
 
-	public boolean userVerify(UUID uuid) {
-
-		UserAccount u = repository.findOne(uuid);
-		if (u == null)
-			return false;
-		u.setEnabled(true);
-		repository.save(u);
-		return true;
-	}
 }
