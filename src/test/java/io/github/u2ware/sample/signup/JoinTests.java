@@ -12,12 +12,12 @@ public class JoinTests extends ApplicationTests {
 	@Test
 	public void contextLoads() throws Exception {
 
-		GET("/join").P(register("user1", "pass1")).RUN(is2xx());
-		POST("/join").P(register("user1", "pass1")).RUN(is2xx());
-		GET("/join").P(register("user1", "pass1")).RUN(is5xx());
-		POST("/join").P(register("user1", "pass1")).RUN(is5xx());
+		GET("/join").P(register("join1", "pass1")).RUN(is2xx());
+		POST("/join").P(register("join1", "pass1")).RUN(is2xx());
+		GET("/join").P(register("join1", "pass1")).RUN(is5xx());
+		POST("/join").P(register("join1", "pass1")).RUN(is5xx());
 
-		POST("/login").P(register("user1", "pass1")).RUN(is2xx());
+		POST("/login").P(register("join1", "pass1")).RUN(is2xx());
 
 	}
 
