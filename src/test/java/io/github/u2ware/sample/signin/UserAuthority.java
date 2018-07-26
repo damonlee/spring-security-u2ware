@@ -11,8 +11,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface UserAuthority {
 
-	public final static String ROLE_SUPER = "ROLE_SUPER";
-	public final static String ROLE_USER = "ROLE_USER";
+	public final static String ROLE_SUPER   = "ROLE_SUPER";
+	public final static String ROLE_MANAGER = "ROLE_MANAGER";
+	public final static String ROLE_USER    = "ROLE_USER";
 
 	@Target({ ElementType.METHOD, ElementType.TYPE })
 	@Retention(RetentionPolicy.RUNTIME)

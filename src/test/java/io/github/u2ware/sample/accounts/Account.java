@@ -1,8 +1,8 @@
 package io.github.u2ware.sample.accounts;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.CreatedBy;
@@ -26,43 +25,58 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import io.github.u2ware.sample.accounts.Account.Authority.AuthorityDeserializer;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @EntityListeners({ AuditingEntityListener.class })
 @Table(name = "USER_ACCOUNT")
-public class Account {
+public @Data class Account {
 
 	@Id
-	private @Getter @Setter UUID uuid;
+	private  UUID uuid;
 
 	@Column(length = 512, nullable = false)
-	private @Getter @Setter @JsonIgnore String password;
+	private  @JsonIgnore String password;
 	@Column(nullable = false)
-	private @Getter @Setter String username;
-	private @Getter @Setter String nickname;
-	private @Getter @Setter boolean enabled = true;
+	private  String username;
+	private  String nickname;
+	private  boolean enabled = true;
 
 	@CreatedBy
-	protected @Getter @Setter String insertedUser;
+	protected  String insertedUser;
 
 	@CreatedDate
-	protected @Getter @Setter Long insertedDatetime;
+	protected  Long insertedDatetime;
 
 	@LastModifiedBy
-	protected @Getter @Setter String updatedUser;
+	protected  String updatedUser;
 
 	@LastModifiedDate
-	protected @Getter @Setter Long updatedDatetime;
+	protected  Long updatedDatetime;
 
 	@OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval = true)
-	private @Getter @Setter @JsonIgnore Collection<Authority> authorities = new ArrayList<Authority>();
+	private  @JsonIgnore Collection<Authority> authorities = new ArrayList<Authority>();
+
+	public void setAuthorities(Collection<Authority> authorities) {
+		this.authorities = authorities;
+		for(Authority a : this.authorities) {
+			a.setAccount(this);
+		}
+	}
 
 	@Entity
 	@Table(name = "USER_ACCOUNT_AUTHORITY")
+	@JsonSerialize(using=ToStringSerializer.class)
+	@JsonDeserialize(using=AuthorityDeserializer.class)
 	public @SuppressWarnings("serial") @Data static class Authority implements GrantedAuthority {
 
 		private @Id @GeneratedValue Long id;
@@ -80,40 +94,17 @@ public class Account {
 		public String toString() {
 			return authority;
 		}
-	}
 
-	/////////////////////////////////////////////////////////////////
-	//
-	/////////////////////////////////////////////////////////////////
-	@Transient
-	public void setRoles(String... authoritiesValues) {
-		List<Authority> authorities = new ArrayList<Authority>();
-		for (String authority : authoritiesValues) {
-			authorities.add(new Authority(this, authority));
-		}
-		getAuthorities().clear();
-		getAuthorities().addAll(authorities);
-	}
-
-	@Transient
-	public String[] getRoles() {
-		List<String> authorities = new ArrayList<String>();
-		for (Authority authority : getAuthorities()) {
-			authorities.add(authority.getAuthority());
-		}
-		String[] r = new String[authorities.size()];
-		authorities.toArray(r);
-		return r;
-	}
-
-	public @Transient boolean hasRoles(String... roles) {
-		for (Authority authority : getAuthorities()) {
-			for (String role : roles) {
-				if (authority.getAuthority().equals(role)) {
-					return true;
-				}
+		public static class  AuthorityDeserializer extends StdDeserializer<Authority>{
+			protected AuthorityDeserializer() {
+				super(Authority.class);
+			}
+			@Override
+			public Authority deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+				Authority a = new Authority();
+				a.setAuthority(p.getText());
+				return a;
 			}
 		}
-		return false;
 	}
 }
