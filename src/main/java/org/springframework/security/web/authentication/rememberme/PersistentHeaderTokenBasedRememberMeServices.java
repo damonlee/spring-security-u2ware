@@ -6,13 +6,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.authentication.rememberme.PersistentRememberMeToken;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.util.StringUtils;
 
 public class PersistentHeaderTokenBasedRememberMeServices extends PersistentTokenBasedRememberMeServices {
@@ -61,25 +58,26 @@ public class PersistentHeaderTokenBasedRememberMeServices extends PersistentToke
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 		logger.info("Remember-me cookie Logout..." + "[" + request.getMethod() + "]" + request.getRequestURL());
-		super.logout(request, response, authentication);
 
-		if (authentication == null) {
-			PersistentRememberMeToken token = extractRememberMeToken(request);
+		PersistentRememberMeToken token = extractRememberMeToken(request);
+		if (token != null) {
+			tokenRepository.removeUserTokens(token.getUsername());
 			logger.info("Remember-me cookie Logout..." + token);
+		}
 
-			if (token != null) {
-				tokenRepository.removeUserTokens(token.getUsername());
+		Authentication auth = authentication;
+		if (auth == null && token != null) {
+			UserDetails user = getUserDetailsService().loadUserByUsername(token.getUsername());
+			auth = createSuccessfulAuthentication(request, user);
+		}
 
-				if (logoutSuccessHandler != null) {
-					try {
-						Authentication auth = new TestingAuthenticationToken(token.getUsername(), null);
-						logoutSuccessHandler.onLogoutSuccess(request, response, auth);
-					} catch (IOException e) {
-						logger.info("Remember-me cookie Token Logout error", e);
-					} catch (ServletException e) {
-						logger.info("Remember-me cookie Token Logout error", e);
-					}
-				}
+		if (auth != null && logoutSuccessHandler != null) {
+			try {
+				logoutSuccessHandler.onLogoutSuccess(request, response, auth);
+			} catch (IOException e) {
+				logger.info("Remember-me cookie Token Logout error", e);
+			} catch (ServletException e) {
+				logger.info("Remember-me cookie Token Logout error", e);
 			}
 		}
 	}
