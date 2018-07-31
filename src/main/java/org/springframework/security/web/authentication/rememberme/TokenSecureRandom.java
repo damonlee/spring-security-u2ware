@@ -12,13 +12,6 @@ import org.springframework.util.StringUtils;
 
 public class TokenSecureRandom {
 
-	private SecureRandom random = new SecureRandom();
-
-	public static final int DEFAULT_SERIES_LENGTH = 16;
-	public static final int DEFAULT_TOKEN_LENGTH = 16;
-
-	private int seriesLength = DEFAULT_SERIES_LENGTH;
-	private int tokenLength = DEFAULT_TOKEN_LENGTH;
 
 	public TokenSecureRandom() {
 		this.tokens = decode();
@@ -58,17 +51,6 @@ public class TokenSecureRandom {
 		PersistentRememberMeToken persistentToken = new PersistentRememberMeToken(
 				username, generateSeriesData(), generateTokenData(), new Date());
 		return persistentToken;
-	}
-	protected String generateSeriesData() {
-		byte[] newSeries = new byte[seriesLength];
-		random.nextBytes(newSeries);
-		return new String(Base64.encode(newSeries));
-	}
-
-	protected String generateTokenData() {
-		byte[] newToken = new byte[tokenLength];
-		random.nextBytes(newToken);
-		return new String(Base64.encode(newToken));
 	}
 
 	
