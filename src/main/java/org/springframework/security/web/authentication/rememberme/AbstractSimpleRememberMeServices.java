@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.RememberMeAuthenticationToken;
@@ -17,92 +16,100 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.rememberme.CookieTheftException;
-import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
-import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationException;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
 public abstract class AbstractSimpleRememberMeServices implements RememberMeServices, LogoutHandler {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	private String key = getClass().getName();
+	private UserDetailsService userDetailsService;
 	private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
 	private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 	private AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
 
-	public String getKey() {
+	protected AbstractSimpleRememberMeServices(UserDetailsService userDetailsService) {
+		Assert.notNull(userDetailsService, "UserDetailsService cannot be null");
+		this.userDetailsService = userDetailsService;
+	}
+	protected String getKey() {
 		return key;
 	}
-
-	public void setKey(String key) {
-		this.key = key;
+	protected UserDetailsService getUserDetailsService() {
+		return userDetailsService;
 	}
 
 	@Override
 	public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
+		logger.debug("autoLogin");
 		try {
-			UserDetails user = loadRememberMe(request, response);
-			userDetailsChecker.check(user);
-			RememberMeAuthenticationToken auth = new RememberMeAuthenticationToken(key, user,
-					authoritiesMapper.mapAuthorities(user.getAuthorities()));
-			auth.setDetails(authenticationDetailsSource.buildDetails(request));
-			return auth;
-
-		} catch (CookieTheftException cte) {
+			return loadRememberMe(request, response);
+		}catch(Exception e) {
 			cancelRememberMe(request, response);
-			throw cte;
-		} catch (UsernameNotFoundException noUser) {
-			logger.debug("Remember-me login was valid but corresponding user not found.", noUser);
-		} catch (InvalidCookieException invalidCookie) {
-			logger.debug("Invalid remember-me cookie: " + invalidCookie.getMessage());
-		} catch (AccountStatusException statusInvalid) {
-			logger.debug("Invalid UserDetails: " + statusInvalid.getMessage());
-		} catch (RememberMeAuthenticationException e) {
-			logger.debug(e.getMessage());
+			return null;
 		}
-		cancelRememberMe(request, response);
-		return null;
 	}
-
-	//////////////////////////////////////////////////
-	//
-	//////////////////////////////////////////////////
 	@Override
 	public void loginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth) {
-		logger.debug("Login of user " + (auth == null ? "Unknown" : auth.getName()));
-		saveRememberMe(request, response, auth);
+		logger.debug("login: " + auth);
+		createRememberMe(request, response, auth);
 	}
 
 	@Override
 	public void loginFail(HttpServletRequest request, HttpServletResponse response) {
-		logger.debug("Interactive login attempt was unsuccessful.");
+		logger.debug("loginFail: ");
 		cancelRememberMe(request, response);
 	}
 
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-		logger.debug("Logout of user " + (authentication == null ? "Unknown" : authentication.getName()));
+		logger.debug("logout: " + authentication);
+
+		Authentication auth = authentication;
+		if(auth == null) {
+			try {
+				auth = loadRememberMe(request, response);
+			}catch(Exception e) {
+			}
+		}
+		if(auth != null) {
+			deleteRememberMe(request, response, auth);
+		}
 		cancelRememberMe(request, response);
 	}
 
-	////////////////////////
-	//
-	////////////////////////
-	protected abstract UserDetails loadRememberMe(HttpServletRequest request, HttpServletResponse response);
 
-	protected abstract void saveRememberMe(HttpServletRequest request, HttpServletResponse response,
-			Authentication successfulAuthentication);
+	//////////////////////////////////////////////////
+	//
+	//////////////////////////////////////////////////
+	protected abstract Authentication loadRememberMe(HttpServletRequest request, HttpServletResponse response) ;
+
+	protected abstract void createRememberMe(HttpServletRequest request, HttpServletResponse response, Authentication auth);
+
+	protected abstract void deleteRememberMe(HttpServletRequest request, HttpServletResponse response, Authentication auth);
 
 	protected abstract void cancelRememberMe(HttpServletRequest request, HttpServletResponse response);
 
+
 	////////////////////////////////////////////////////////////////////
 	//
 	////////////////////////////////////////////////////////////////////
+	protected Authentication createAuthentication(HttpServletRequest request, String username) {
+		UserDetails user = getUserDetailsService().loadUserByUsername(username);
+		userDetailsChecker.check(user);
+		RememberMeAuthenticationToken auth = new RememberMeAuthenticationToken(
+				key, user, authoritiesMapper.mapAuthorities(user.getAuthorities()));
+		auth.setDetails(authenticationDetailsSource.buildDetails(request));
+		return auth;
+	}
+
 	protected String retrieveUserName(Authentication authentication) {
 		if (isInstanceOfUserDetails(authentication)) {
 			return ((UserDetails) authentication.getPrincipal()).getUsername();

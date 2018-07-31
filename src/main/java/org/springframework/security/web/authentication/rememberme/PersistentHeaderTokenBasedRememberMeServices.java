@@ -1,33 +1,18 @@
 package org.springframework.security.web.authentication.rememberme;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.util.StringUtils;
 
 public class PersistentHeaderTokenBasedRememberMeServices extends PersistentTokenBasedRememberMeServices {
 
-	private PersistentTokenRepository tokenRepository;
-	private LogoutSuccessHandler logoutSuccessHandler;
-
 	public PersistentHeaderTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService,
 			PersistentTokenRepository tokenRepository) {
-		this(key, userDetailsService, tokenRepository, null);
-	}
-
-	public PersistentHeaderTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService,
-			PersistentTokenRepository tokenRepository, LogoutSuccessHandler logoutSuccessHandler) {
 		super(key, userDetailsService, tokenRepository);
 		super.setCookieName("Authorization");
-		this.tokenRepository = tokenRepository;
-		this.logoutSuccessHandler = logoutSuccessHandler;
 	}
 
 	@Override
@@ -58,37 +43,10 @@ public class PersistentHeaderTokenBasedRememberMeServices extends PersistentToke
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 		logger.info("Remember-me cookie Logout..." + "[" + request.getMethod() + "]" + request.getRequestURL());
-
-		PersistentRememberMeToken token = extractRememberMeToken(request);
-		if (token != null) {
-			tokenRepository.removeUserTokens(token.getUsername());
-			logger.info("Remember-me cookie Logout..." + token);
-		}
-
 		Authentication auth = authentication;
-		if (auth == null && token != null) {
-			UserDetails user = getUserDetailsService().loadUserByUsername(token.getUsername());
-			auth = createSuccessfulAuthentication(request, user);
+		if (auth == null) {
+			auth = super.autoLogin(request, response);
 		}
-
-		if (auth != null && logoutSuccessHandler != null) {
-			try {
-				logoutSuccessHandler.onLogoutSuccess(request, response, auth);
-			} catch (IOException e) {
-				logger.info("Remember-me cookie Token Logout error", e);
-			} catch (ServletException e) {
-				logger.info("Remember-me cookie Token Logout error", e);
-			}
-		}
+		super.logout(request, response, auth);
 	}
-
-	protected PersistentRememberMeToken extractRememberMeToken(HttpServletRequest request) {
-		String extractRememberMeCookie = request.getHeader(super.getCookieName());
-		if (StringUtils.hasLength(extractRememberMeCookie)) {
-			String[] cookieTokens = decodeCookie(extractRememberMeCookie);
-			return tokenRepository.getTokenForSeries(cookieTokens[0]);
-		}
-		return null;
-	}
-
 }

@@ -6,6 +6,11 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
-public interface AuthenticationHandler extends AuthenticationSuccessHandler, AuthenticationFailureHandler, LogoutSuccessHandler, AccessDeniedHandler, AuthenticationEntryPoint {
+public interface AuthenticationHandler 
+		extends AuthenticationSuccessHandler, 
+				AuthenticationFailureHandler,
+				LogoutSuccessHandler, 
+				AccessDeniedHandler, 
+				AuthenticationEntryPoint {
 
 }
