@@ -2,6 +2,7 @@ package org.springframework.security.web.authentication.rememberme;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Date;
 
 import org.springframework.security.crypto.codec.Base64;
@@ -9,42 +10,67 @@ import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.codec.Utf8;
 import org.springframework.util.StringUtils;
 
-public class TokenSignature extends AbstractTokenSignature{
+public class TokenSecureRandom {
 
-	private static final int TWO_WEEKS_S = 1209600;
+	private SecureRandom random = new SecureRandom();
 
-	private String key = getClass().getName();
-	private String[] tokens;
+	public static final int DEFAULT_SERIES_LENGTH = 16;
+	public static final int DEFAULT_TOKEN_LENGTH = 16;
 
-	public TokenSignature(String username, String password) {
+	private int seriesLength = DEFAULT_SERIES_LENGTH;
+	private int tokenLength = DEFAULT_TOKEN_LENGTH;
 
-		int tokenLifetime = TWO_WEEKS_S;
-		long expiryTime = System.currentTimeMillis();
-		// SEC-949
-		expiryTime += 1000L * (tokenLifetime < 0 ? TWO_WEEKS_S : tokenLifetime);
-
-		String signatureValue = makeTokenSignature(expiryTime, username, password);
-
-		this.tokens = new String[] {username, Long.toString(expiryTime), signatureValue};
-	}
-	public TokenSignature(String value) {
-		this.tokens = super.decode(value);
+	public TokenSecureRandom() {
+		this.tokens = decode();
 	}
 
 	public String encode() {
-		return super.encode(this.tokens);
+		return encode(this.tokens);
 	}
 	public void validate(String username, String password) {
 		validate(this.tokens, username, password);
 	}
 
+	private String encode(String[] values) {
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < values.length; i++) {
+			sb.append(values[i]);
+
+			if (i < values.length - 1) {
+				sb.append(DELIMITER);
+			}
+		}
+
+		String value = sb.toString();
+
+		sb = new StringBuilder(new String(Base64.encode(value.getBytes())));
+
+		while (sb.charAt(sb.length() - 1) == '=') {
+			sb.deleteCharAt(sb.length() - 1);
+		}
+
+		return sb.toString();
+	}
 	
-	
-	
-	
-	
-	
-	
+	private PersistentRememberMeToken decode(String username) throws InvalidCookieException {
+
+		PersistentRememberMeToken persistentToken = new PersistentRememberMeToken(
+				username, generateSeriesData(), generateTokenData(), new Date());
+		return persistentToken;
+	}
+	protected String generateSeriesData() {
+		byte[] newSeries = new byte[seriesLength];
+		random.nextBytes(newSeries);
+		return new String(Base64.encode(newSeries));
+	}
+
+	protected String generateTokenData() {
+		byte[] newToken = new byte[tokenLength];
+		random.nextBytes(newToken);
+		return new String(Base64.encode(newToken));
+	}
+
 	
 	
 	
