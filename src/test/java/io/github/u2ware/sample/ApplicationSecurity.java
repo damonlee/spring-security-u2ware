@@ -77,8 +77,7 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 						new PersistentHeaderTokenBasedRememberMeServices(
 								rememberMeKey, 
 								userDetailsService, 
-								persistentTokenRepository,
-								authenticationHandler))
+								persistentTokenRepository))
 				.key(rememberMeKey)
 				.and()
 			.sessionManagement()

@@ -17,26 +17,25 @@ import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 public abstract class AbstractSimpleRememberMeServices implements RememberMeServices, LogoutHandler {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private String key = getClass().getName();
+	private String key;
 	private UserDetailsService userDetailsService;
 	private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
 	private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 	private AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
 
-	protected AbstractSimpleRememberMeServices(UserDetailsService userDetailsService) {
+	protected AbstractSimpleRememberMeServices(String key, UserDetailsService userDetailsService) {
 		Assert.notNull(userDetailsService, "UserDetailsService cannot be null");
+		this.key = key;
 		this.userDetailsService = userDetailsService;
 	}
 	protected String getKey() {
@@ -48,41 +47,29 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 
 	@Override
 	public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
-		logger.debug("autoLogin");
-		try {
-			return loadRememberMe(request, response);
-		}catch(Exception e) {
-			cancelRememberMe(request, response);
-			return null;
-		}
+		logger.info(request.getRequestURL() + " [autoLogin]: ");
+		return loadRememberMe(request, response);
 	}
 	@Override
-	public void loginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth) {
-		logger.debug("login: " + auth);
-		createRememberMe(request, response, auth);
+	public void loginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+		logger.info(request.getRequestURL() + " [loginSuccess]: ");
+		saveRememberMe(request, response, authentication);
 	}
 
 	@Override
 	public void loginFail(HttpServletRequest request, HttpServletResponse response) {
-		logger.debug("loginFail: ");
-		cancelRememberMe(request, response);
+		logger.info(request.getRequestURL() + " [loginFail]: ");
 	}
 
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-		logger.debug("logout: " + authentication);
+		logger.info(request.getRequestURL() + " [logout]: ");
 
 		Authentication auth = authentication;
 		if(auth == null) {
-			try {
-				auth = loadRememberMe(request, response);
-			}catch(Exception e) {
-			}
+			auth = loadRememberMe(request, response);
 		}
-		if(auth != null) {
-			deleteRememberMe(request, response, auth);
-		}
-		cancelRememberMe(request, response);
+		cancelRememberMe(request, response, auth);
 	}
 
 
@@ -91,12 +78,9 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 	//////////////////////////////////////////////////
 	protected abstract Authentication loadRememberMe(HttpServletRequest request, HttpServletResponse response) ;
 
-	protected abstract void createRememberMe(HttpServletRequest request, HttpServletResponse response, Authentication auth);
+	protected abstract void saveRememberMe(HttpServletRequest request, HttpServletResponse response, Authentication auth);
 
-	protected abstract void deleteRememberMe(HttpServletRequest request, HttpServletResponse response, Authentication auth);
-
-	protected abstract void cancelRememberMe(HttpServletRequest request, HttpServletResponse response);
-
+	protected abstract void cancelRememberMe(HttpServletRequest request, HttpServletResponse response, Authentication auth);
 
 	////////////////////////////////////////////////////////////////////
 	//
@@ -166,8 +150,8 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 		if (setHttpOnlyMethod != null) {
 			ReflectionUtils.invokeMethod(setHttpOnlyMethod, cookie, Boolean.TRUE);
 		} else if (logger.isDebugEnabled()) {
-			logger.debug(
-					"Note: Cookie will not be marked as HttpOnly because you are not using Servlet 3.0 (Cookie#setHttpOnly(boolean) was not found).");
+			logger.debug("Note: Cookie will not be marked as HttpOnly because " + 
+					"you are not using Servlet 3.0 (Cookie#setHttpOnly(boolean) was not found).");
 		}
 		response.addCookie(cookie);
 	}
