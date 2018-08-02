@@ -1,4 +1,4 @@
-package org.springframework.security.web.authentication.rememberme;
+package org.springframework.security.web.authentication.rememberme.support;
 
 import java.lang.reflect.Method;
 
@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
-public abstract class AbstractSimpleRememberMeServices implements RememberMeServices, LogoutHandler {
+public abstract class AbstractRememberMeServices implements RememberMeServices, LogoutHandler {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -33,12 +33,12 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 	private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 	private AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
 
-	protected AbstractSimpleRememberMeServices(String key, UserDetailsService userDetailsService) {
+	protected AbstractRememberMeServices(String key, UserDetailsService userDetailsService) {
 		Assert.notNull(userDetailsService, "UserDetailsService cannot be null");
 		this.key = key;
 		this.userDetailsService = userDetailsService;
 	}
-	protected String getKey() {
+	public String getKey() {
 		return key;
 	}
 	protected UserDetailsService getUserDetailsService() {
@@ -92,6 +92,14 @@ public abstract class AbstractSimpleRememberMeServices implements RememberMeServ
 				key, user, authoritiesMapper.mapAuthorities(user.getAuthorities()));
 		auth.setDetails(authenticationDetailsSource.buildDetails(request));
 		return auth;
+	}
+
+	protected UserDetails retrieveUserDetails(Authentication authentication) {
+		if (isInstanceOfUserDetails(authentication)) {
+			return ((UserDetails) authentication.getPrincipal());
+		} else {
+			return null;
+		}
 	}
 
 	protected String retrieveUserName(Authentication authentication) {

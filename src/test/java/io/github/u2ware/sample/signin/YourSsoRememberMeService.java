@@ -5,9 +5,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.rememberme.AbstractSimpleRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.support.AbstractRememberMeServices;
 
-public class YourSsoRememberMeService extends AbstractSimpleRememberMeServices{
+public class YourSsoRememberMeService extends AbstractRememberMeServices{
 
 	protected YourSsoRememberMeService(String key, UserDetailsService userDetailsService) {
 		super(key, userDetailsService);

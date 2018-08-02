@@ -1,9 +1,9 @@
-package org.springframework.security.web.authentication.rememberme;
+package org.springframework.security.web.authentication.rememberme.support;
 
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.util.StringUtils;
 
-public abstract class RememberMeTokenSignature {
+public abstract class AbstractRememberMeTokenSignature {
 
 	public static final String DELIMITER = ":";
 

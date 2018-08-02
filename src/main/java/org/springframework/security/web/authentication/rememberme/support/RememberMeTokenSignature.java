@@ -1,4 +1,4 @@
-package org.springframework.security.web.authentication.rememberme;
+package org.springframework.security.web.authentication.rememberme.support;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -6,10 +6,31 @@ import java.security.NoSuchAlgorithmException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.codec.Utf8;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationException;
 
-public class UserDetailsRememberMeTokenSignature extends RememberMeTokenSignature {
+public class RememberMeTokenSignature extends AbstractRememberMeTokenSignature {
 
 	private static final int TWO_WEEKS_S = 1209600;
+
+	private RememberMeTokenSignature() {
+	}
+
+	public static RememberMeTokenSignature getInstance(String signature) {
+		RememberMeTokenSignature s = new RememberMeTokenSignature();
+		String[] values = s.decode(signature);
+		s.username = values[0];
+		s.expiryTime = values[1];
+		s.signatureValue = values[2];
+		return s;
+	}
+	public static RememberMeTokenSignature newInstance(UserDetails user) {
+		RememberMeTokenSignature s = new RememberMeTokenSignature();
+		long tokenExpiryTime = s.getSEC949();
+		s.username = user.getUsername();
+		s.expiryTime = Long.toString(tokenExpiryTime);
+		s.signatureValue = s.makeTokenSignature(tokenExpiryTime, user.getUsername(), user.getPassword());
+		return s;
+	}
 
 	private String username;
 	private String expiryTime;
@@ -19,53 +40,19 @@ public class UserDetailsRememberMeTokenSignature extends RememberMeTokenSignatur
 		return username;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 	public String getExpiryTime() {
 		return expiryTime;
-	}
-
-	public void setExpiryTime(String expiryTime) {
-		this.expiryTime = expiryTime;
 	}
 
 	public String getSignatureValue() {
 		return signatureValue;
 	}
 
-	public void setSignatureValue(String signatureValue) {
-		this.signatureValue = signatureValue;
-	}
-
 	/////////////////////////////////////////////////
 	//
 	/////////////////////////////////////////////////
-	public void setSignature(String signatureText) {
-		String[] values = decode(signatureText);
-		this.username = values[0];
-		this.expiryTime = values[1];
-		this.signatureValue = values[2];
-	}
-
 	public String getSignature() {
 		return encode(new String[] { username, expiryTime, signatureValue });
-	}
-
-	/////////////////////////////////////////////////
-	//
-	/////////////////////////////////////////////////
-	public void setToken(UserDetails user) {
-		long tokenExpiryTime = getSEC949();
-
-		this.username = user.getUsername();
-		this.expiryTime = Long.toString(tokenExpiryTime);
-		this.signatureValue = makeTokenSignature(tokenExpiryTime, user.getUsername(), user.getPassword());
-	}
-
-	public UserDetails getToken() {
-		throw new RuntimeException("Not support");
 	}
 
 	/////////////////////////////////////////////////
@@ -99,6 +86,9 @@ public class UserDetailsRememberMeTokenSignature extends RememberMeTokenSignatur
 		}
 	}
 
+	/////////////////////////////////////////////////
+	//
+	/////////////////////////////////////////////////
 	private String makeTokenSignature(long tokenExpiryTime, String username, String password) {
 		String data = username + ":" + tokenExpiryTime + ":" + password + ":" + getClass();
 		MessageDigest digest;
