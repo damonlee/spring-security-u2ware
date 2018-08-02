@@ -1,9 +1,9 @@
 package io.github.u2ware.sample.signin;
 
-import static org.springframework.test.u2ware.RestMockMvc.GET;
+import static org.springframework.test.web.servlet.MockMvcHelper.GET;
 
 import org.junit.Test;
-import org.springframework.test.u2ware.security.UserDetailsDelegate;
+import org.springframework.security.test.web.support.UserDetailsDelegate;
 
 import io.github.u2ware.sample.ApplicationTests;
 

@@ -5,8 +5,9 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.u2ware.RestMockMvc.GET;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.MockMvcHelper.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +21,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.web.support.UserDetailsDelegate;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.u2ware.security.UserDetailsDelegate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
