@@ -8,10 +8,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public class AuthorizationHeaderBasedRemberMeService extends AbstractSimpleRememberMeServices {
 
-	private AuthorizationHeaderRepository tokenRepository;
+	private AuthorizationHeaderTokenRepository tokenRepository;
 
 	public AuthorizationHeaderBasedRemberMeService(String key, 
-			UserDetailsService userDetailsService, AuthorizationHeaderRepository tokenRepository) {
+			UserDetailsService userDetailsService, AuthorizationHeaderTokenRepository tokenRepository) {
 		super(key, userDetailsService);
 		this.tokenRepository = tokenRepository;
 	}
