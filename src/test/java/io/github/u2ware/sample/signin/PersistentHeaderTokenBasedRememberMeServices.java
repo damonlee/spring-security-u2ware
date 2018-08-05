@@ -14,7 +14,9 @@ public class PersistentHeaderTokenBasedRememberMeServices extends AbstractRememb
 
 	private PersistentTokenRepository tokenRepository;
 
-	public PersistentHeaderTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService,
+	public PersistentHeaderTokenBasedRememberMeServices(
+			String key, 
+			UserDetailsService userDetailsService,
 			PersistentTokenRepository tokenRepository) {
 		super(key, userDetailsService);
 		this.tokenRepository = tokenRepository;
@@ -22,7 +24,7 @@ public class PersistentHeaderTokenBasedRememberMeServices extends AbstractRememb
 
 	@Override
 	protected Authentication loadRememberMe(HttpServletRequest request, HttpServletResponse response) {
-		logger.info(request.getRequestURL() + " [loadRememberMe]: ");
+		logger.debug("[loadRememberMe  ]: "+request.getRequestURL());
 
 		String authorization = request.getHeader("Authorization");
 		if (authorization == null) {
@@ -31,10 +33,10 @@ public class PersistentHeaderTokenBasedRememberMeServices extends AbstractRememb
 
 		PersistentRememberMeTokenSignature signature = PersistentRememberMeTokenSignature.getInstance(authorization);
 		PersistentRememberMeToken token = tokenRepository.getTokenForSeries(signature.getSeries());
-
 		if (token == null) {
 			return null;
 		}
+
 		try {
 			signature.validate(token);
 		} catch (Exception e) {
@@ -42,44 +44,45 @@ public class PersistentHeaderTokenBasedRememberMeServices extends AbstractRememb
 			return null;
 		}
 
-		//////////////////////////////////////////////////////////////////////
-		signature = PersistentRememberMeTokenSignature.newInstance(token);
-		token = signature.getToken();
-		tokenRepository.updateToken(token.getSeries(), token.getTokenValue(), token.getDate());
-		/////////////////////////////////////////
-		
-		authorization = signature.getSignature();
-		response.setHeader("Authorization", authorization);
+		PersistentRememberMeTokenSignature newSignature = PersistentRememberMeTokenSignature.newInstance(token);
+		PersistentRememberMeToken newToken = newSignature.getToken();
+		tokenRepository.updateToken(newToken.getSeries(), newToken.getTokenValue(), newToken.getDate());
 
-		String username = token.getUsername();
+		String newAuthorization = signature.getSignature();
+		response.setHeader("Authorization", newAuthorization);
+
+		String username = newToken.getUsername();
 		return createAuthentication(request, username);
 	}
 
 	@Override
 	protected void saveRememberMe(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) {
-		logger.info(request.getRequestURL() + " [saveRememberMe]: ");
+		logger.debug("[saveRememberMe  ]: "+request.getRequestURL());
 
 		String username = super.retrieveUserName(authentication);
-		PersistentRememberMeTokenSignature signature = PersistentRememberMeTokenSignature.newInstance(username);
+		PersistentRememberMeTokenSignature newSignature = PersistentRememberMeTokenSignature.newInstance(username);
 
-		///////////////////////////////
-		PersistentRememberMeToken newToken = signature.getToken();
+		PersistentRememberMeToken newToken = newSignature.getToken();
 		tokenRepository.createNewToken(newToken);
-		///////////////////////////////
 
-		String authorization = signature.getSignature();
+		String authorization = newSignature.getSignature();
 		response.setHeader("Authorization", authorization);
 	}
 
 	@Override
 	protected void cancelRememberMe(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) {
-		logger.info(request.getRequestURL() + " [cancelRememberMe]: ");
-		if (authentication == null)
+		logger.debug("[cancelRememberMe]: "+request.getRequestURL());
+
+		Authentication auth = authentication;
+		if(auth == null) {
+			auth = loadRememberMe(request, response);
+		}
+		if (auth == null)
 			return;
 
-		String username = super.retrieveUserName(authentication);
+		String username = super.retrieveUserName(auth);
 		tokenRepository.removeUserTokens(username);
 	}
 

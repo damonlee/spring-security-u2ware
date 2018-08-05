@@ -24,7 +24,7 @@ public class PersistentHeaderTokenBasedRememberMeServices extends PersistentToke
 	protected String extractRememberMeCookie(HttpServletRequest request) {
 		String headerValue = request.getHeader(super.getCookieName());
 		if (StringUtils.hasLength(headerValue)) {
-			logger.info(request.getRequestURL() + " [Remember-me cookie detecteing...]: ");
+			logger.debug(request.getRequestURL() + " [Remember-me cookie detecteing...]: ");
 		}
 		return headerValue;
 	}
@@ -33,7 +33,7 @@ public class PersistentHeaderTokenBasedRememberMeServices extends PersistentToke
 	protected void setCookie(String[] tokens, int maxAge, HttpServletRequest request, HttpServletResponse response) {
 		String headerValue = encodeCookie(tokens);
 		response.setHeader(super.getCookieName(), headerValue);
-		logger.info(request.getRequestURL() + " [Remember-me cookie accepting...]: ");
+		logger.debug(request.getRequestURL() + " [Remember-me cookie accepting...]: ");
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class PersistentHeaderTokenBasedRememberMeServices extends PersistentToke
 			auth = super.autoLogin(request, response);
 		}
 
-		logger.info(request.getRequestURL() + " [Remember-me cookie deleting...]: ");
+		logger.debug(request.getRequestURL() + " [Remember-me cookie deleting...]: ");
 		super.logout(request, response, auth);
 	}
 }

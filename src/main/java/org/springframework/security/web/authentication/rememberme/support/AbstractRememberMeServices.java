@@ -47,29 +47,25 @@ public abstract class AbstractRememberMeServices implements RememberMeServices, 
 
 	@Override
 	public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
-		logger.info(request.getRequestURL() + " [autoLogin]: ");
+		logger.debug("[autoLogin   ]: "+request.getRequestURL());
 		return loadRememberMe(request, response);
 	}
 	@Override
 	public void loginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-		logger.info(request.getRequestURL() + " [loginSuccess]: ");
+		logger.debug("[loginSuccess]: "+request.getRequestURL());
 		saveRememberMe(request, response, authentication);
 	}
 
 	@Override
 	public void loginFail(HttpServletRequest request, HttpServletResponse response) {
-		logger.info(request.getRequestURL() + " [loginFail]: ");
+		logger.debug("[loginFail   ]: "+request.getRequestURL());
+		cancelRememberMe(request, response, null);
 	}
 
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-		logger.info(request.getRequestURL() + " [logout]: ");
-
-		Authentication auth = authentication;
-		if(auth == null) {
-			auth = loadRememberMe(request, response);
-		}
-		cancelRememberMe(request, response, auth);
+		logger.debug("[logout      ]: "+request.getRequestURL());
+		cancelRememberMe(request, response, authentication);
 	}
 
 

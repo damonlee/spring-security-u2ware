@@ -6,11 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.rememberme.PersistentRememberMeToken;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.authentication.rememberme.support.AbstractRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.support.RememberMeTokenSignature;
-import org.springframework.security.web.authentication.rememberme.support.PersistentRememberMeTokenSignature;
 
 public class HeaderTokenBasedRememberMeServices extends AbstractRememberMeServices {
 
@@ -21,7 +18,7 @@ public class HeaderTokenBasedRememberMeServices extends AbstractRememberMeServic
 
 	@Override
 	protected Authentication loadRememberMe(HttpServletRequest request, HttpServletResponse response) {
-		logger.info(request.getRequestURL() + " [loadRememberMe]: ");
+		logger.debug("[loadRememberMe  ]: "+request.getRequestURL());
 
 		String authorization = request.getHeader("Authorization");
 		if (authorization == null) {
@@ -50,7 +47,7 @@ public class HeaderTokenBasedRememberMeServices extends AbstractRememberMeServic
 	@Override
 	protected void saveRememberMe(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) {
-		logger.info(request.getRequestURL() + " [saveRememberMe]: ");
+		logger.debug("[saveRememberMe  ]: "+request.getRequestURL());
 
 		UserDetails user = super.retrieveUserDetails(authentication);
 		RememberMeTokenSignature signature = RememberMeTokenSignature.newInstance(user);
@@ -62,9 +59,7 @@ public class HeaderTokenBasedRememberMeServices extends AbstractRememberMeServic
 	@Override
 	protected void cancelRememberMe(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) {
-		logger.info(request.getRequestURL() + " [cancelRememberMe]: ");
-		if (authentication == null)
-			return;
+		logger.debug("[cancelRememberMe]: "+request.getRequestURL());
 
 	}
 
