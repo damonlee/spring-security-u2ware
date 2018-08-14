@@ -131,4 +131,16 @@ public class AccountEventService implements AuthenticationHandler {
 		writer.flush();
 		writer.close();
 	}
+
+	@Override
+	public String[] getAllowedPaths() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] getAuthenticatedPaths() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
