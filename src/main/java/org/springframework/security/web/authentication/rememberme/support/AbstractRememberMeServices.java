@@ -17,13 +17,11 @@ import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
-public abstract class AbstractRememberMeServices implements RememberMeServices, LogoutHandler {
+public abstract class AbstractRememberMeServices implements RememberMeServices {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
