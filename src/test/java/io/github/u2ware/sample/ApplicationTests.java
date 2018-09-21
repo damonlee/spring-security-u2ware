@@ -7,7 +7,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.MockMvcHelper.*;
+import static io.github.u2ware.sample.ApplicationMockMvc.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.web.support.UserDetailsDelegate;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -68,8 +68,8 @@ public class ApplicationTests {
 	@Test
 	public void contextLoads() throws Exception {
 
-		GET(uri("/profile")).U(new UserDetailsDelegate("su")).is2xx(mvc);
-		GET(uri("/")).U(new UserDetailsDelegate("su")).is2xx(mvc);
+		GET(uri("/profile")).U("su").is2xx(mvc);
+		GET(uri("/")).U("su").is2xx(mvc);
 		//http://localhost/apis/members{?page,size,sort}
 	}
 
