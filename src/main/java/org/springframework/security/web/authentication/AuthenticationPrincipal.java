@@ -1,6 +1,7 @@
 package org.springframework.security.web.authentication;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -18,55 +19,82 @@ public abstract class AuthenticationPrincipal implements UserDetails {
 	private @JsonIgnore boolean accountNonExpired = true;
 	private @JsonIgnore boolean accountNonLocked = true;
 	private @JsonIgnore boolean credentialsNonExpired = true;
-	private @JsonIgnore Collection<GrantedAuthority> authorities  = new ArrayList<GrantedAuthority>();
+	private @JsonIgnore Collection<GrantedAuthority> authorities;
 
 	public String getUsername() {
 		return username;
 	}
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 	public boolean isEnabled() {
 		return enabled;
 	}
+
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+
 	public boolean isAccountNonExpired() {
 		return accountNonExpired;
 	}
+
 	public void setAccountNonExpired(boolean accountNonExpired) {
 		this.accountNonExpired = accountNonExpired;
 	}
+
 	public boolean isAccountNonLocked() {
 		return accountNonLocked;
 	}
+
 	public void setAccountNonLocked(boolean accountNonLocked) {
 		this.accountNonLocked = accountNonLocked;
 	}
+
 	public boolean isCredentialsNonExpired() {
 		return credentialsNonExpired;
 	}
+
 	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
 		this.credentialsNonExpired = credentialsNonExpired;
 	}
-	public Collection<GrantedAuthority> getAuthorities() {
+
+	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
 	}
+
+	public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+		this.authorities = new ArrayList<GrantedAuthority>(authorities);
+	}
+
+	/////////////////////////////////////////
+	//
+	/////////////////////////////////////////
+	public void setRoles(GrantedAuthority... authorities) {
+		this.setAuthorities(Arrays.asList(authorities));
+	}
+
 	public void setRoles(String... roles) {
-		authorities = new ArrayList<GrantedAuthority>();
+		ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 		for (String role : roles) {
 			authorities.add(new SimpleGrantedAuthority(role));
 		}
+		this.setAuthorities(authorities);
 	}
+
 	public String[] getRoles() {
-		if(authorities == null) return new String[]{};
+		if (authorities == null)
+			return new String[] {};
 		String[] roles = new String[authorities.size()];
 		int i = 0;
 		for (GrantedAuthority authority : authorities) {
@@ -77,7 +105,8 @@ public abstract class AuthenticationPrincipal implements UserDetails {
 	}
 
 	public boolean hasRoles(String... roles) {
-		if(authorities == null) return false;
+		if (authorities == null)
+			return false;
 		for (GrantedAuthority authority : authorities) {
 			for (String role : roles) {
 				if (authority.getAuthority().equals(role)) {
