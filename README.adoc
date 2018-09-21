@@ -12,7 +12,7 @@
 <dependency>
     <groupId>io.github.u2ware</groupId>
     <artifactId>spring-security-u2ware</artifactId>
-    <version>1.5.13.RELEASE</version>
+    <version>1.5.16.RELEASE</version>
 </dependency>
 ----
 
