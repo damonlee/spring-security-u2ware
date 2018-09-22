@@ -57,12 +57,12 @@ public class ApplicationMockMvc {
 		this.requestBuilder = builder;
 	}
 
-	public ApplicationMockMvc H(String auth) throws Exception{
+	public ApplicationMockMvc A(String auth) throws Exception{
 		this.requestBuilder = requestBuilder.header("Authorization", auth);
 		return this;
 	}
-	public ApplicationMockMvc H(ApplicationMockMvc helper) throws Exception{
-		this.requestBuilder = requestBuilder.header("Authorization", helper.header());
+	public ApplicationMockMvc A(ApplicationMockMvc helper) throws Exception{
+		this.requestBuilder = requestBuilder.header("Authorization", helper.auth());
 		return this;
 	}
 	public ApplicationMockMvc U(String username) throws Exception{
@@ -132,7 +132,7 @@ public class ApplicationMockMvc {
 	//////////////////////////////////////////
 	//
 	///////////////////////////////////////////
-	public String header() throws Exception {
+	public String auth() throws Exception {
 		return resultActions.andReturn().getResponse().getHeader("Authorization");
 	}
 	public String body() throws Exception {
