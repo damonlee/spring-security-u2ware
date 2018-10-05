@@ -1,6 +1,6 @@
 package io.github.u2ware.sample.signin;
 
-import static io.github.u2ware.sample.ApplicationMockMvc.GET;
+import static io.github.u2ware.sample.ApplicationMvc.GET;
 
 import org.junit.Test;
 

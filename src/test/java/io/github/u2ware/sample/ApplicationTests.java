@@ -1,6 +1,7 @@
 package io.github.u2ware.sample;
 
-import static io.github.u2ware.sample.ApplicationMockMvc.GET;
+import static io.github.u2ware.sample.ApplicationMvc.GET;
+import static io.github.u2ware.sample.ApplicationMvc.userDetails;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,7 +30,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
+
+import io.github.u2ware.sample.ApplicationMvc.ApplicationMvcResult;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -42,9 +44,6 @@ public class ApplicationTests {
 	protected @Value("${security.user.password:}") String freepassPassword;
 	protected @Value("${security.user.role:}") String[] freepassRoles;
 
-	// protected @Autowired CrudRepository<?, ?>[] repositorirs;
-	protected final HashMap<String, String> links = new HashMap<String, String>();
-	protected final HashMap<String, Map<String,Object>> forms = new HashMap<String, Map<String,Object>>();
 	protected @Autowired ObjectMapper objectMapper;
 	protected @Autowired WebApplicationContext context;
 	protected MockMvc mvc;
@@ -66,58 +65,49 @@ public class ApplicationTests {
 	@Test
 	public void contextLoads() throws Exception {
 
-		GET(uri("/profile")).U("su").is2xx(mvc);
-		GET(uri("/")).U("su").is2xx(mvc);
+		GET(uri("/profile")).U(userDetails("su")).is2xx(mvc);
+		GET(uri("/")).U(userDetails("su")).is2xx(mvc);
 		//http://localhost/apis/members{?page,size,sort}
 	}
 
-	protected String uri(String key) {
-		if (links.containsKey(key)) {
-			return links.get(key);
-		} else {
-			return springDataRestBasePath + key;
-		}
-	}
-	protected Map<String,Object> content(String key) {
-		return forms.get(key);
-	}
+	//////////////////////////////////////////////////////////////////
+	//
+	//////////////////////////////////////////////////////////////////
+	protected final HashMap<String, ApplicationMvcResult> results = new HashMap<String, ApplicationMvcResult>();
 
-	protected ResultHandler uris(final String key) {
+	public ResultHandler mark(final String key) throws Exception{
 		return new ResultHandler() {
-			@Override
 			public void handle(MvcResult result) throws Exception {
-				String value = result.getResponse().getHeader("Location");
-				if(value != null) {
-					links.put(key, value);
-					return;
-				}
-				value = JsonPath.read(result.getResponse().getContentAsString(), "$._links.self.href");
-				if(value != null) {
-					links.put(key, value);
-					return;
-				}
-				value = result.getRequest().getRequestURL().toString();
-				if(value != null) {
-					links.put(key, value);
-					return;
-				}
+				results.put(key, new ApplicationMvcResult(result));
 			}
 		};
 	}
-
-	protected ResultHandler contents(final String key) {
-		return new ResultHandler() {
-			@Override
-			@SuppressWarnings("unchecked")
-			public void handle(MvcResult result) throws Exception {
-				String a = result.getResponse().getContentAsString();
-				forms.put(key, objectMapper.readValue(a, Map.class));
-			}
-		};
-	}
-
 	protected ResultMatcher json(String path, Object value) {
 		return jsonPath(path).value(value);
+	}
+
+	protected String uri(String keyDotPath) throws Exception{
+		if (results.containsKey(keyDotPath)) {
+			return results.get(keyDotPath).uri();
+		} else {
+			int idx = keyDotPath.indexOf('.');
+			if(idx > -1) {
+				String key = keyDotPath.substring(0, idx);
+				String path = "$"+keyDotPath.substring(idx);
+				return results.get(key).path(path);
+			}else {
+				return springDataRestBasePath + keyDotPath;
+			}
+		}
+	}
+	protected Map<String,Object> content(String key) throws Exception{
+		return results.get(key).contents(objectMapper);
+	}
+	protected <T> T path(String keyDotPath) throws Exception{
+		int idx = keyDotPath.indexOf('.');
+		String key = keyDotPath.substring(0, idx);
+		String path = "$"+keyDotPath.substring(idx);
+		return results.get(key).path(path);
 	}
 
 }
