@@ -11,7 +11,7 @@ public interface AuthenticationHandler
 				AccessDeniedHandler, 
 				AuthenticationEntryPoint {
 
-	public String[] getAllowedPaths();
-	public String[] getAuthenticatedPaths();
+//	public String[] getAllowedPaths();
+//	public String[] getAuthenticatedPaths();
 
 }
