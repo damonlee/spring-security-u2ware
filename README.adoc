@@ -12,18 +12,18 @@
 <dependency>
     <groupId>io.github.u2ware</groupId>
     <artifactId>spring-security-u2ware</artifactId>
-    <version>1.5.17.RELEASE</version>
+    <version>1.5.18.RELEASE</version>
 </dependency>
 ----
 
 *spring-security-u2ware* 는 
-https://docs.spring.io/spring-boot/docs/1.5.17.RELEASE/reference/htmlsingle/[spring-boot-1.5.16.RELEASE] , 
-https://docs.spring.io/spring-security/site/docs/4.2.9.RELEASE/reference/htmlsingle/[spring-security-4.2.8.RELEASE] 
+https://docs.spring.io/spring-boot/docs/1.5.18.RELEASE/reference/htmlsingle/[spring-boot-1.5.18.RELEASE] , 
+https://docs.spring.io/spring-security/site/docs/4.2.10.RELEASE/reference/htmlsingle/[spring-security-4.2.10.RELEASE] 
 기반으로 동작합니다.
 
 == RememberMeServices 
 
-https://docs.spring.io/spring-security/site/docs/4.2.9.RELEASE/reference/htmlsingle/[spring-security] 는 
+https://docs.spring.io/spring-security/site/docs/4.2.10.RELEASE/reference/htmlsingle/[spring-security] 는 
 Cookie 에 저장된 Token 값을 분석하여 `RememberMeServices` 를 구현하는 
 `TokenBasedRememberMeServices` 와 `PersistentTokenBasedRememberMeServices` 를 제공하고 있습니다.
 
